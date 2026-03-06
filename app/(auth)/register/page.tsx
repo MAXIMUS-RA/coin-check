@@ -1,3 +1,4 @@
+import { signIn } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,12 +13,17 @@ import React from "react";
 
 export default function RegisterPage() {
   return (
-    <Card className="w-[400px]">
+    <Card className="w-100">
       <CardHeader>
         <CardTitle>Register</CardTitle>
       </CardHeader>
       <CardContent>
-        <form>
+        <form
+          action={async (formData) => {
+            "use server";
+            await signIn("credentials", formData);
+          }}
+        >
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Username</Label>
@@ -36,7 +42,7 @@ export default function RegisterPage() {
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
+        <Button type="submit">Deploy</Button>
       </CardFooter>
     </Card>
   );

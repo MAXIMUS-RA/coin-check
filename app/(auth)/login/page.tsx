@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
   return (
-    <Card className="w-87.5">
+    <Card className="w-100">
       <CardHeader>
         <CardTitle>Login</CardTitle>
         <CardDescription>
