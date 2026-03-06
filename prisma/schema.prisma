@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// 1. NEXTAUTH TABLES (Authentication)
+// ==========================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // For the Credentials provider
+
+  // Auth Relations
+  accounts      Account[]
+  sessions      Session[]
+  
+  // Financial Tracker Relations
+  financialAccounts FinancialAccount[]
+  categories        Category[]
+  transactions      Transaction[]
+  budgets           Budget[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ==========================================
+// 2. FINANCIAL TRACKER TABLES (Business Logic)
+// ==========================================
+
+enum AccountType {
+  BANK        // Checking/Savings
+  CREDIT      // Credit Cards
+  CASH        // Physical Cash
+  INVESTMENT  // Brokerage/Crypto
+}
+
+model FinancialAccount {
+  id          String      @id @default(cuid())
+  name        String      // e.g., "Chase Checking", "Wallet"
+  type        AccountType
+  balance     Float       @default(0)
+  currency    String      @default("USD")
+  
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  transactions Transaction[]
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+model Category {
+  id          String          @id @default(cuid())
+  name        String          // e.g., "Groceries", "Salary"
+  type        TransactionType // Matches INCOME or EXPENSE
+  icon        String?         // Emoji or lucide icon name
+  color       String?         // UI Hex Color
+  
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  transactions Transaction[]
+  budgets      Budget[]
+
+  @@unique([name, userId])    // Custom categories tied to the user
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model Transaction {
+  id          String          @id @default(cuid())
+  amount      Float
+  type        TransactionType
+  date        DateTime        @default(now())
+  description String          // E.g., "Starbucks", "Monthly Salary"
+  notes       String?         @db.Text
+  
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accountId   String
+  account     FinancialAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  categoryId  String?
+  category    Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model Budget {
+  id          String    @id @default(cuid())
+  amount      Float     // Budgeted limit for the month
+  month       Int       // 1 - 12
+  year        Int       // e.g., 2024
+  
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, categoryId, month, year]) // One budget per category per month
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+
