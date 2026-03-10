@@ -15,6 +15,8 @@ import {
   Receipt,
 } from "lucide-react";
 import { getUserTransactions } from "@/lib/data/transactions";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const TYPE_STYLES = {
   INCOME: {
@@ -67,11 +69,18 @@ export default async function TransactionsPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 p-6 text-white">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Transactions</h1>
-        <p className="text-sm text-slate-400 mt-1">
-          Your full transaction history
-        </p>
+      <div className="flex w-full justify-between">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-white">Transactions</h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Your full transaction history
+          </p>
+        </div>
+        <div>
+          <Link href={"./transactions/create"}>
+            <Button>Create</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">

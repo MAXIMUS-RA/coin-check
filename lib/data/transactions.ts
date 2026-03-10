@@ -7,3 +7,12 @@ export async function getUserTransactions(userId: string) {
     orderBy: { date: "desc" },
   });
 }
+
+export async function getUserCategories(userId: string) {
+  return prisma.category.findMany({ where: { userId } });
+}
+
+export async function getUserAccounts(userId: string) {
+  return prisma.financialAccount.findMany({ where: { userId:userId } });
+}
+

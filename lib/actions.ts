@@ -1,7 +1,9 @@
+"use server"
+
 import { redirect } from "next/navigation";
 import { prisma } from "./prisma";
 import { hash } from "bcryptjs";
-import { signIn } from "@/auth";
+import { auth, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 
 export async function registerUser(formData: FormData) {
@@ -44,7 +46,39 @@ export async function loginUser(formData: FormData) {
           return { error: "Something went wrong." };
       }
     }
-    // NextAuth requires throwing the redirect error to work properly
     throw error;
   }
+}
+
+export async function createTransaction(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/login");
+
+  const amount = parseFloat(formData.get("amount") as string);
+  const type = formData.get("type") as "INCOME" | "EXPENSE" | "TRANSFER";
+  const description = formData.get("description") as string;
+  const accountId = formData.get("accountId") as string;
+  const categoryId = formData.get("categoryId") as string | null;
+  const date = formData.get("date") as string;
+  const notes = formData.get("notes") as string | null;
+
+  try {
+    await prisma.transaction.create({
+      data: {
+        amount,
+        type,
+        description,
+        accountId,
+        categoryId: categoryId || null,
+        date: new Date(date),
+        notes: notes || null,
+        userId: session.user.id,
+      },
+    });
+  } catch (error) {
+    console.error("Error creating transaction:", error);
+    throw new Error("Failed to create transaction");
+  }
+
+  redirect("/dashboard/transactions");
 }
