@@ -24,9 +24,6 @@ export default async function CreateTransactionPage() {
     getUserCategories(session.user.id),
   ]);
 
-  console.log("Logged in ID:", session.user.id);
-  console.log("Found accounts:", accounts);
-
   return (
     <div className="w-full flex flex-col items-center p-6 pt-5 pb-16">
       <div className="w-full max-w-2xl mb-2 text-center">
