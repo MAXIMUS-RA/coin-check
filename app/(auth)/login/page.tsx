@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,13 +15,10 @@ import { Label } from "@/components/ui/label";
 import { loginUser } from "@/lib/actions";
 
 export default function LoginPage() {
+  //how to work with useActionState
+  const [state, formAction] = useActionState(loginUser, undefined);
   return (
-    <form
-      action={async (formdata: FormData) => {
-        "use server";
-        await loginUser(formdata);
-      }}
-    >
+    <form action={formAction}>
       <Card className="w-100">
         <CardHeader>
           <CardTitle>Login</CardTitle>
@@ -40,7 +39,7 @@ export default function LoginPage() {
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button variant="outline">Cancel</Button>
+          <Button>Cancel</Button>
           <Button>Deploy</Button>
         </CardFooter>
       </Card>

@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { redirect } from "next/navigation";
 import { prisma } from "./prisma";
@@ -31,7 +31,7 @@ export async function registerUser(formData: FormData) {
   redirect("/login");
 }
 
-export async function loginUser(formData: FormData) {
+export async function loginUser(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
