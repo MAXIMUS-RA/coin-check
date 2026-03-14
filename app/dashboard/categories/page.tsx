@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import CategoryCreate from "@/components/ui/dashboard/CategoryCreate";
 import CategoryRow from "@/components/ui/dashboard/categoryRow";
 import {
   Table,
@@ -31,13 +33,15 @@ export default async function CategoriesPage() {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Categories</h1>
-        <p className="text-sm text-slate-400 mt-1">
-          Manage your expense and income categories
-        </p>
+      <div className=" w-full flex justify-between">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-white">Categories</h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Manage your expense and income categories
+          </p>
+        </div>
+        <CategoryCreate />
       </div>
-
       <Table className="text-white">
         <TableCaption className="text-slate-400">
           {categories.length} categories found

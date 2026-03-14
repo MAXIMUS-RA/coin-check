@@ -5,6 +5,7 @@ import { prisma } from "./prisma";
 import { hash } from "bcryptjs";
 import { auth, signIn } from "@/auth";
 import { AuthError } from "next-auth";
+import { revalidatePath } from "next/cache";
 
 export async function registerUser(formData: FormData) {
   const name = formData.get("name") as string;
@@ -81,4 +82,31 @@ export async function createTransaction(formData: FormData) {
   }
 
   redirect("/dashboard/transactions");
+}
+
+export async function createCategory(prevState:any,formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/login");
+
+  const name = formData.get("name") as string;
+  const type = formData.get("type") as "INCOME" | "EXPENSE";
+  const icon = formData.get("icon") as string | null;
+  const color = formData.get("color") as string | null;
+
+  try {
+    await prisma.category.create({
+      data: {
+        name,
+        type,
+        icon: icon || null,
+        color: color || null,
+        userId: session.user.id,
+      },
+    });
+    revalidatePath("/dashboard/categories");
+    return { success: true, message: "Category created successfully" };
+  } catch (error) {
+    console.error("Error creating category:", error);
+    return { success: false, message: "Failed to create category." };
+  }
 }
