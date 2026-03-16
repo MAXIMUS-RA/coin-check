@@ -93,6 +93,11 @@ export async function createCategory(prevState: any, formData: FormData) {
    const type = formData.get("type") as "INCOME" | "EXPENSE";
    const icon = formData.get("icon") as string | null;
    const color = formData.get("color") as string | null;
+   const accountId = formData.get("accountId") as string;
+
+   if (!accountId) {
+      return { success: false, message: "Please select an account." };
+   }
 
    try {
       await prisma.category.create({
@@ -101,14 +106,40 @@ export async function createCategory(prevState: any, formData: FormData) {
             type,
             icon: icon || null,
             color: color || null,
+            accountId,
             userId: session.user.id,
          },
       });
+
       revalidatePath("/dashboard/categories");
       return { success: true, message: "Category created successfully" };
    } catch (error) {
       console.error("Error creating category:", error);
       return { success: false, message: "Failed to create category." };
+   }
+}
+
+export async function editCategory(id: string, prevState: any, formData: FormData) {
+   const session = await auth();
+   if (!session?.user?.id) redirect("/login");
+
+   const name = formData.get("name") as string;
+   const type = formData.get("type") as "INCOME" | "EXPENSE";
+   const icon = formData.get("icon") as string | null;
+   const color = formData.get("color") as string | null;
+   const accountId = formData.get("accountId") as string;
+
+   try {
+      await prisma.category.updateMany({
+         where: { id, userId: session.user.id },
+         data: { name, type, icon: icon || null, color: color || null, accountId },
+      });
+
+      revalidatePath("/dashboard/categories");
+      return { success: true, message: "Category updated successfully" };
+   } catch (error) {
+      console.error("Error updating category:", error);
+      return { success: false, message: "Failed to update category." };
    }
 }
 
@@ -125,91 +156,76 @@ export async function deleteCategory(id: string) {
    }
 }
 
-export async function editCategory(id: string, prevState: any, formData: FormData) {
+export async function createFinancialAccount(formData: FormData) {
    const session = await auth();
    if (!session?.user?.id) redirect("/login");
 
-   const name = formData.get("name") as string;
-   const type = formData.get("type") as "INCOME" | "EXPENSE";
-   const icon = formData.get("icon") as string | null;
-   const color = formData.get("color") as string | null;
+   const name = (formData.get("name") as string)?.trim();
+   const type = formData.get("type") as "BANK" | "CREDIT" | "CASH" | "INVESTMENT";
+   const balance = Number(formData.get("balance") ?? 0);
+   const currency = ((formData.get("currency") as string) || "USD").toUpperCase();
 
-   try {
-      // Use updateMany so we can filter by both id and userId without requiring a compound unique index
-      const result = await prisma.category.update({
-         where: { id },
-         data: { name, type, icon: icon || null, color: color || null },
-      });
-
-      
-
-      revalidatePath("/dashboard/categories");
-      return { success: true, message: "Category updated successfully" };
-   } catch (error) {
-      console.error("Error updating category:", error);
-      return { success: false, message: "Failed to update category." };
+   if (!name) throw new Error("Account name is required");
+   if (!["BANK", "CREDIT", "CASH", "INVESTMENT"].includes(type)) {
+      throw new Error("Invalid account type");
    }
-}
+   if (!Number.isFinite(balance)) throw new Error("Invalid balance");
 
-export async function createBudget(formData: FormData) {
-   const session = await auth();
-   if (!session?.user?.id) redirect("/login");
+   await prisma.financialAccount.create({
+      data: {
+         name,
+         type,
+         balance,
+         currency,
+         userId: session.user.id,
+      },
+   });
 
-   const amount = Number(formData.get("amount"));
-   const month = Number(formData.get("month"));
-   const year = Number(formData.get("year"));
-   const categoryId = formData.get("categoryId") as string;
-
-   if (!categoryId || !Number.isFinite(amount) || amount <= 0) {
-      throw new Error("Invalid budget data");
-   }
-
-   if (!Number.isInteger(month) || month < 1 || month > 12) {
-      throw new Error("Invalid month");
-   }
-
-   if (!Number.isInteger(year) || year < 2000 || year > 3000) {
-      throw new Error("Invalid year");
-   }
-
-   try {
-      await prisma.budget.create({
-         data: {
-            amount,
-            month,
-            year,
-            categoryId,
-            userId: session.user.id,
-         },
-      });
-   } catch (error: any) {
-      if (error?.code === "P2002") {
-         throw new Error("A budget already exists for this category and month.");
-      }
-      console.error("Error creating budget:", error);
-      throw new Error("Failed to create budget");
-   }
-
-   revalidatePath("/dashboard/budgets");
+   revalidatePath("/dashboard/accounts");
+   revalidatePath("/dashboard/transactions/create");
    revalidatePath("/dashboard/categories");
 }
 
-export async function deleteBudget(id: string) {
+export async function deleteFinancialAccount(id: string) {
    const session = await auth();
    if (!session?.user?.id) redirect("/login");
 
-   try {
-      await prisma.budget.deleteMany({
-         where: {
-            id,
-            userId: session.user.id,
-         },
-      });
-   } catch (error) {
-      console.error("Failed to delete budget:", error);
-      throw new Error("Failed to delete budget");
-   }
+   await prisma.financialAccount.deleteMany({
+      where: { id, userId: session.user.id },
+   });
 
-   revalidatePath("/dashboard/budgets");
+   revalidatePath("/dashboard/accounts");
+   revalidatePath("/dashboard/transactions");
+   revalidatePath("/dashboard/transactions/create");
    revalidatePath("/dashboard/categories");
+}
+
+export async function getCategories(userId: string) {
+   const session = await auth();
+   if (!session?.user?.id) redirect("/login");
+
+   const categories = await prisma.category.findMany({
+      where: { userId: session?.user?.id },
+      select: {
+         id: true,
+         name: true,
+         icon: true,
+         type: true,
+         color: true,
+         accountId: true,
+         _count: { select: { transactions: true } },
+         transactions: {
+            select: {
+               id: true,
+               account: true,
+               description: true,
+               date: true,
+               amount: true,
+               type: true,
+            },
+         },
+      },
+   });
+
+   return categories;
 }

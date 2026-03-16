@@ -44,7 +44,6 @@ export default async function CategoriesPage() {
                   <TableHead className="text-white">Name</TableHead>
                   <TableHead className="text-white">Type</TableHead>
                   <TableHead className="text-white">Transactions</TableHead>
-                  <TableHead className="text-white">Budgets</TableHead>
                   <TableHead className="text-white">Total Amount</TableHead>
                   <TableHead className="text-gray-600">Actions</TableHead>
                </TableRow>
