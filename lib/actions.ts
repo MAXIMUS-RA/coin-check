@@ -136,14 +136,12 @@ export async function editCategory(id: string, prevState: any, formData: FormDat
 
    try {
       // Use updateMany so we can filter by both id and userId without requiring a compound unique index
-      const result = await prisma.category.updateMany({
-         where: { id, userId: session.user.id },
+      const result = await prisma.category.update({
+         where: { id },
          data: { name, type, icon: icon || null, color: color || null },
       });
 
-      if (result.count === 0) {
-         return { success: false, message: "Category not found or unauthorized." };
-      }
+      
 
       revalidatePath("/dashboard/categories");
       return { success: true, message: "Category updated successfully" };
