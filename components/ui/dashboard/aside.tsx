@@ -18,7 +18,6 @@ const links = [
   { name: "Accounts",     href: "/dashboard/accounts",     icon: Wallet },
   { name: "Transactions", href: "/dashboard/transactions", icon: ArrowLeftRight },
   { name: "Categories",   href: "/dashboard/categories",   icon: Tag },
-  { name: "Budgets",      href: "/dashboard/budgets",      icon: PiggyBank },
 ];
 
 export default function Aside() {

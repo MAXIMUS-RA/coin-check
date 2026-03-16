@@ -42,7 +42,6 @@ export default function CategoryRow({ category }: { category: CategoryWithTransa
                </span>
             </TableCell>
             <TableCell>{category._count.transactions}</TableCell>
-            <TableCell>{category._count.budgets}</TableCell>
             <TableCell className="font-medium">${totalAmount.toFixed(2)}</TableCell>
 
             <TableCell className="text-right ">

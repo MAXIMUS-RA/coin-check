@@ -30,7 +30,6 @@ model User {
   financialAccounts FinancialAccount[]
   categories        Category[]
   transactions      Transaction[]
-  budgets           Budget[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -93,7 +92,8 @@ model FinancialAccount {
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   transactions Transaction[]
-  
+  categories   Category[]   // add this
+
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
@@ -114,10 +114,11 @@ model Category {
   userId      String
   user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  transactions Transaction[]
-  budgets      Budget[]
+  accountId   String       // add this
+  account     FinancialAccount @relation(fields: [accountId], references: [id], onDelete: Cascade) // add this
 
-  @@unique([name, userId])    // Custom categories tied to the user
+  transactions Transaction[]
+  @@unique([name, userId, accountId]) // update uniqueness so same name can exist in different accounts
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 }
@@ -143,21 +144,23 @@ model Transaction {
   updatedAt   DateTime        @updatedAt
 }
 
-model Budget {
-  id          String    @id @default(cuid())
-  amount      Float     // Budgeted limit for the month
-  month       Int       // 1 - 12
-  year        Int       // e.g., 2024
+// model Budget {
+//   id          String    @id @default(cuid())
+//   amount      Float     // Budgeted limit for the month
+//   month       Int       // 1 - 12
+//   year        Int       // e.g., 2024
   
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   userId      String
+//   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  categoryId  String
-  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+//   categoryId  String
+//   category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, categoryId, month, year]) // One budget per category per month
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
+//   @@unique([userId, categoryId, month, year]) // One budget per category per month
+//   createdAt   DateTime  @default(now())
+//   updatedAt   DateTime  @updatedAt
+// }
+
+// delete entire Budget model
 
 

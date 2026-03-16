@@ -150,3 +150,66 @@ export async function editCategory(id: string, prevState: any, formData: FormDat
       return { success: false, message: "Failed to update category." };
    }
 }
+
+export async function createBudget(formData: FormData) {
+   const session = await auth();
+   if (!session?.user?.id) redirect("/login");
+
+   const amount = Number(formData.get("amount"));
+   const month = Number(formData.get("month"));
+   const year = Number(formData.get("year"));
+   const categoryId = formData.get("categoryId") as string;
+
+   if (!categoryId || !Number.isFinite(amount) || amount <= 0) {
+      throw new Error("Invalid budget data");
+   }
+
+   if (!Number.isInteger(month) || month < 1 || month > 12) {
+      throw new Error("Invalid month");
+   }
+
+   if (!Number.isInteger(year) || year < 2000 || year > 3000) {
+      throw new Error("Invalid year");
+   }
+
+   try {
+      await prisma.budget.create({
+         data: {
+            amount,
+            month,
+            year,
+            categoryId,
+            userId: session.user.id,
+         },
+      });
+   } catch (error: any) {
+      if (error?.code === "P2002") {
+         throw new Error("A budget already exists for this category and month.");
+      }
+      console.error("Error creating budget:", error);
+      throw new Error("Failed to create budget");
+   }
+
+   revalidatePath("/dashboard/budgets");
+   revalidatePath("/dashboard/categories");
+}
+
+export async function deleteBudget(id: string) {
+   const session = await auth();
+   if (!session?.user?.id) redirect("/login");
+
+   try {
+      await prisma.budget.deleteMany({
+         where: {
+            id,
+            userId: session.user.id,
+         },
+      });
+   } catch (error) {
+      console.error("Failed to delete budget:", error);
+      throw new Error("Failed to delete budget");
+   }
+
+   revalidatePath("/dashboard/budgets");
+   revalidatePath("/dashboard/categories");
+}

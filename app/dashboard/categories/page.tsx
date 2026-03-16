@@ -12,7 +12,7 @@ export default async function CategoriesPage() {
       where: { userId: session?.user?.id },
       include: {
          _count: {
-            select: { transactions: true, budgets: true },
+            select: { transactions: true },
          },
          transactions: {
             select: {
