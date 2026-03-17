@@ -15,7 +15,7 @@ import { useState } from "react";
 
 const links = [
   { name: "Overview",     href: "/dashboard",              icon: LayoutDashboard },
-  { name: "Accounts",     href: "/dashboard/accounts",     icon: Wallet },
+  { name: "Accounts",     href: "/dashboard/financial-accounts",     icon: Wallet },
   { name: "Transactions", href: "/dashboard/transactions", icon: ArrowLeftRight },
   { name: "Categories",   href: "/dashboard/categories",   icon: Tag },
 ];

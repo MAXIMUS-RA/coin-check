@@ -65,18 +65,30 @@ export async function createTransaction(formData: FormData) {
    const notes = formData.get("notes") as string | null;
 
    try {
-      await prisma.transaction.create({
-         data: {
-            amount,
-            type,
-            description,
-            accountId,
-            categoryId: categoryId || null,
-            date: new Date(date),
-            notes: notes || null,
-            userId: session.user.id,
-         },
-      });
+      const balanceAdjustment = type === "EXPENSE" ? -amount : amount;
+
+      await prisma.$transaction([
+         prisma.transaction.create({
+            data: {
+               amount,
+               type,
+               description,
+               accountId,
+               categoryId: categoryId || null,
+               date: new Date(date),
+               notes: notes || null,
+               userId: session.user.id,
+            },
+         }),
+         prisma.financialAccount.update({
+            where: { id: accountId },
+            data: {
+               balance: {
+                  increment: balanceAdjustment,
+               },
+            },
+         }),
+      ]);
    } catch (error) {
       console.error("Error creating transaction:", error);
       throw new Error("Failed to create transaction");
