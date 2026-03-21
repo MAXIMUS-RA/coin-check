@@ -94,7 +94,9 @@ export async function createTransaction(formData: FormData) {
       throw new Error("Failed to create transaction");
    }
 
-   redirect("/dashboard/transactions");
+   revalidatePath("/dashboard/transactions");
+   revalidatePath("/dashboard/financial-accounts");
+   revalidatePath("/dashboard/categories");
 }
 
 export async function createCategory(prevState: any, formData: FormData) {
@@ -209,6 +211,42 @@ export async function deleteFinancialAccount(id: string) {
    revalidatePath("/dashboard/accounts");
    revalidatePath("/dashboard/transactions");
    revalidatePath("/dashboard/transactions/create");
+   revalidatePath("/dashboard/categories");
+}
+
+export async function deleteTransaction(id: string) {
+   const session = await auth();
+   if (!session?.user?.id) redirect("/login");
+
+   try {
+      const transaction = await prisma.transaction.findUnique({
+         where: { id, userId: session.user.id },
+      });
+
+      if (!transaction) throw new Error("Transaction not found");
+
+      const balanceAdjustment = transaction.type === "EXPENSE" ? transaction.amount : -transaction.amount;
+
+      await prisma.$transaction([
+         prisma.transaction.delete({
+            where: { id },
+         }),
+         prisma.financialAccount.update({
+            where: { id: transaction.accountId },
+            data: {
+               balance: {
+                  increment: balanceAdjustment,
+               },
+            },
+         }),
+      ]);
+   } catch (error) {
+      console.error("Failed to delete transaction", error);
+      throw new Error("Failed to delete transaction");
+   }
+
+   revalidatePath("/dashboard/transactions");
+   revalidatePath("/dashboard/financial-accounts");
    revalidatePath("/dashboard/categories");
 }
 
