@@ -7,6 +7,8 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { Wallet, CreditCard, Landmark } from "lucide-react";
 import FinancialAccountCreate from "@/components/ui/dashboard/FinancialAccountCreate";
+import { toast } from "sonner";
+import DeleteAccountButton from "@/components/ui/dashboard/DeleteAccountButton";
 
 function fmt(amount: number, currency = "USD") {
    return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
@@ -40,46 +42,43 @@ export default async function AccountsPage() {
 
    return (
       <div className="p-6 text-white">
-         {/* Top Header Row */}
          <div className="w-full flex justify-between items-center mb-6">
             <div>
                <h1 className="text-2xl font-bold text-white">Accounts</h1>
                <p className="text-sm text-slate-400 mt-1">Manage your wallets, bank accounts, and cards</p>
             </div>
 
-            {/* Replaced ugly inline form with shiny new Dialog Button */}
             <div>
                <FinancialAccountCreate />
             </div>
-         </div> {/* <--- CLOSE THE TOP ROW FLEX DIV HERE */}
+         </div>
 
-         {/* Stats Cards Row */}
-         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6"> {/* Changed my-6 to mb-6 */}
+         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
             <Card className="bg-slate-900 border-slate-800 text-white gap-3">
-                  <CardHeader>
-                     <CardDescription className="text-slate-400 flex items-center gap-1.5">
-                        <Wallet className="size-4 text-emerald-400" /> Total Balance
-                     </CardDescription>
-                     <CardTitle className="text-2xl font-bold text-emerald-400">{fmt(totalBalance)}</CardTitle>
-                  </CardHeader>
+               <CardHeader>
+                  <CardDescription className="text-slate-400 flex items-center gap-1.5">
+                     <Wallet className="size-4 text-emerald-400" /> Total Balance
+                  </CardDescription>
+                  <CardTitle className="text-2xl font-bold text-emerald-400">{fmt(totalBalance)}</CardTitle>
+               </CardHeader>
             </Card>
 
             <Card className="bg-slate-900 border-slate-800 text-white gap-3">
-                  <CardHeader>
-                     <CardDescription className="text-slate-400 flex items-center gap-1.5">
-                        <CreditCard className="size-4 text-red-400" /> Credit Debt
-                     </CardDescription>
-                     <CardTitle className="text-2xl font-bold text-red-400">{fmt(debt)}</CardTitle>
-                  </CardHeader>
+               <CardHeader>
+                  <CardDescription className="text-slate-400 flex items-center gap-1.5">
+                     <CreditCard className="size-4 text-red-400" /> Credit Debt
+                  </CardDescription>
+                  <CardTitle className="text-2xl font-bold text-red-400">{fmt(debt)}</CardTitle>
+               </CardHeader>
             </Card>
 
             <Card className="bg-slate-900 border-slate-800 text-white gap-3">
-                  <CardHeader>
-                     <CardDescription className="text-slate-400 flex items-center gap-1.5">
-                        <Landmark className="size-4 text-blue-400" /> Accounts
-                     </CardDescription>
-                     <CardTitle className="text-2xl font-bold text-blue-400">{accounts.length}</CardTitle>
-                  </CardHeader>
+               <CardHeader>
+                  <CardDescription className="text-slate-400 flex items-center gap-1.5">
+                     <Landmark className="size-4 text-blue-400" /> Accounts
+                  </CardDescription>
+                  <CardTitle className="text-2xl font-bold text-blue-400">{accounts.length}</CardTitle>
+               </CardHeader>
             </Card>
          </div>
 
@@ -123,10 +122,18 @@ export default async function AccountsPage() {
                         <TableCell className="text-right">{acc._count.transactions}</TableCell>
                         <TableCell className="text-right">{acc._count.categories}</TableCell>
                         <TableCell className="text-right">
-                           <form action={deleteFinancialAccount.bind(null, acc.id)}>
-                              <Button type="submit" variant="destructive" size="sm">
-                                 Delete
-                              </Button>
+                           <form
+                              action={async () => {
+                                 "use server";
+                                 try {
+                                    await deleteFinancialAccount(acc.id);
+                                    toast.success("Account deleted successfully!");
+                                 } catch (error) {
+                                    toast.error("Failed to delete account.");
+                                 }
+                              }}
+                           >
+                              <DeleteAccountButton accountId={acc.id} />
                            </form>
                         </TableCell>
                      </TableRow>
