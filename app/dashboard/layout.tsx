@@ -1,5 +1,6 @@
 import Aside from "@/components/ui/dashboard/aside";
 import React from "react";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function DashboardLayout({
   children,
@@ -7,11 +8,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-950 text-white">
-      <div className="w-16 h-full shrink-0 border-r border-slate-800 bg-slate-950/50">
-        <Aside />
-      </div>
-      <div className="flex-1 h-full w-full">{children}</div>
-    </div>
+    <SidebarProvider defaultOpen={false} className="min-h-screen bg-slate-950 text-white">
+      <Aside />
+      <SidebarInset className="min-h-screen bg-slate-950 text-white">
+        <div className="flex h-12 items-center border-b border-slate-800 px-3 md:hidden">
+          <SidebarTrigger className="text-slate-200 hover:bg-slate-800 hover:text-white" />
+        </div>
+        <div className="h-full w-full">{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

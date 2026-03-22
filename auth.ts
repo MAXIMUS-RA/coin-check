@@ -22,7 +22,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const isPasswordValid = compare(
+        const isPasswordValid = await compare(
           credentials.password as string,
           user.password,
         );
