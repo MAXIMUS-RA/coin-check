@@ -6,9 +6,9 @@ import { Button } from "../button";
 import { Label } from "../label";
 import { Input } from "../input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../card";
-import { createCategory } from "@/lib/actions";
 import SubmitBtn from "./SubmitBtn";
 import { toast } from "sonner";
+import { createCategory } from "@/lib/actions";
 
 export default function CategoryCreate() {
    const [open, setOpen] = useState(false);

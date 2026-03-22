@@ -4,10 +4,10 @@ import { TableRow, TableCell } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "../button";
 import { SquarePen, Trash } from "lucide-react";
-import { deleteCategory } from "@/lib/actions";
 import CategoryEdit from "./CategoryEdit";
 import { useState } from "react";
 import { toast } from "sonner";
+import { deleteCategory } from "@/lib/actions";
 
 export default function CategoryRow({ category }: { category: CategoryWithTransactions }) {
    const totalAmount = category.transactions.reduce((acc, val) => acc + val.amount, 0);

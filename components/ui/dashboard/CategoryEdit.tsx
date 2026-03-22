@@ -6,10 +6,10 @@ import { Button } from "../button";
 import { Label } from "../label";
 import { Input } from "../input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../card";
-import { createCategory, editCategory } from "@/lib/actions";
 import SubmitBtn from "./SubmitBtn";
 import { SquarePen } from "lucide-react";
 import { toast } from "sonner";
+import { editCategory } from "@/lib/actions";
 
 export default function CategoryEdit({ category }: { category: CategoryWithTransactions }) {
    const [open, setOpen] = useState(false);
