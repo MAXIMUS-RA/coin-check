@@ -1,20 +1,16 @@
 import { auth } from "@/auth";
-import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { createFinancialAccount, deleteFinancialAccount } from "@/lib/actions";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { Wallet, CreditCard, Landmark } from "lucide-react";
 import FinancialAccountCreate from "@/components/ui/dashboard/FinancialAccountCreate";
-import { toast } from "sonner";
 import DeleteAccountButton from "@/components/ui/dashboard/DeleteAccountButton";
+import FinancialAccountEdit from "@/components/ui/dashboard/FinancialAccountEdit";
 
 function fmt(amount: number, currency = "USD") {
    return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
 }
-
-const ACCOUNT_TYPES = ["BANK", "CREDIT", "CASH", "INVESTMENT"] as const;
 
 export default async function AccountsPage() {
    const session = await auth();
@@ -93,7 +89,6 @@ export default async function AccountsPage() {
                   <TableHead className="text-white">Currency</TableHead>
                   <TableHead className="text-white text-right">Balance</TableHead>
                   <TableHead className="text-white text-right">Transactions</TableHead>
-                  <TableHead className="text-white text-right">Categories</TableHead>
                   <TableHead className="text-gray-600 text-right">Actions</TableHead>
                </TableRow>
             </TableHeader>
@@ -120,19 +115,10 @@ export default async function AccountsPage() {
                         </TableCell>
                         <TableCell className="text-right">{acc._count.transactions}</TableCell>
                         <TableCell className="text-right">
-                           <form
-                              action={async () => {
-                                 "use server";
-                                 try {
-                                    await deleteFinancialAccount(acc.id);
-                                    toast.success("Account deleted successfully!");
-                                 } catch (error) {
-                                    toast.error("Failed to delete account.");
-                                 }
-                              }}
-                           >
+                           <div className="flex items-center justify-end gap-2">
+                              <FinancialAccountEdit account={acc} />
                               <DeleteAccountButton accountId={acc.id} />
-                           </form>
+                           </div>
                         </TableCell>
                      </TableRow>
                   ))

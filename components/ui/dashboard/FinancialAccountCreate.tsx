@@ -34,10 +34,8 @@ export default function FinancialAccountCreate() {
                         try {
                            await createFinancialAccount(formData);
                            setOpen(false);
-                           // Trigger success alert!
                            toast.success("Account created successfully!");
                         } catch (error) {
-                           // Trigger error alert if something goes wrong
                            toast.error("Failed to create account. Please try again.");
                         }
                      }}
