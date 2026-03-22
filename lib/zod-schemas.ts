@@ -48,3 +48,26 @@ export const CategorySchema = z.object({
       .nullable()
       .optional(),
 });
+
+export const UserProfileSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters."),
+  email: z.string().trim().toLowerCase().email("Please provide a valid email."),
+  image: z.string().trim().url().nullable().or(z.literal("")).optional(),
+  defaultCurrency: z.string().trim().length(3, "Currency must be exactly 3 letters.").toUpperCase(),
+  dashboardPeriod: z.coerce.number().refine((val) => [30, 90, 365].includes(val), {
+    message: "Invalid dashboard period selected.",
+  }),
+  themePreference: z.enum(["dark", "light", "system"], {
+    message: "Invalid theme selected.",
+  }),
+  hiddenWidgets: z.array(z.string()).optional().default([]),
+});
+
+export const ChangePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required."),
+  newPassword: z.string().min(8, "New password must be at least 8 characters."),
+  confirmPassword: z.string().min(1, "Please confirm your new password."),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "New passwords do not match.",
+  path: ["confirmPassword"],
+});

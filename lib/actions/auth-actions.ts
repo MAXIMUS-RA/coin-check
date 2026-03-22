@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { UserProfileSchema, ChangePasswordSchema } from "@/lib/zod-schemas";
 
 export async function registerUser(formData: FormData) {
   const name = formData.get("name") as string;
@@ -34,8 +35,11 @@ export async function loginUser(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
+  console.log(formData);
+
   try {
-    await signIn("credentials", { email, password, redirectTo: "/dashboard" });
+    const result = await signIn("credentials", { email, password, redirectTo: "/dashboard" });
+    console.log(result);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -54,36 +58,26 @@ export async function updateUserProfile(prevState: any, formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const name = (formData.get("name") as string)?.trim();
-  const email = (formData.get("email") as string)?.trim().toLowerCase();
-  const image = (formData.get("image") as string)?.trim() || null;
-  const defaultCurrency = ((formData.get("defaultCurrency") as string) || "USD").trim().toUpperCase();
-  const dashboardPeriod = Number(formData.get("dashboardPeriod") || 30);
-  const themePreference = ((formData.get("themePreference") as string) || "dark").trim().toLowerCase();
-  const hiddenWidgets = formData
-    .getAll("hiddenWidgets")
-    .map((v) => String(v))
-    .filter(Boolean);
+  const validatedFields = UserProfileSchema.safeParse({
+    name: formData.get("name"),
+    email: formData.get("email"),
+    image: formData.get("image"),
+    defaultCurrency: formData.get("defaultCurrency"),
+    dashboardPeriod: formData.get("dashboardPeriod"),
+    themePreference: formData.get("themePreference"),
+    hiddenWidgets: formData.getAll("hiddenWidgets").filter(Boolean),
+  });
 
-  if (!name || name.length < 2) {
-    return { success: false, message: "Name must be at least 2 characters." };
+  if (!validatedFields.success) {
+    const fieldErrors = validatedFields.error.flatten().fieldErrors;
+    const firstError = Object.values(fieldErrors).flat()[0];
+    return {
+      success: false,
+      message: firstError || "Invalid input.",
+    };
   }
 
-  if (!email || !email.includes("@")) {
-    return { success: false, message: "Please provide a valid email." };
-  }
-
-  if (defaultCurrency.length !== 3) {
-    return { success: false, message: "Currency must be exactly 3 letters." };
-  }
-
-  if (![30, 90, 365].includes(dashboardPeriod)) {
-    return { success: false, message: "Invalid dashboard period selected." };
-  }
-
-  if (!["dark", "light", "system"].includes(themePreference)) {
-    return { success: false, message: "Invalid theme selected." };
-  }
+  const { name, email, image, defaultCurrency, dashboardPeriod, themePreference, hiddenWidgets } = validatedFields.data;
 
   const existingEmail = await prisma.user.findFirst({
     where: {
@@ -120,17 +114,18 @@ export async function changePassword(prevState: any, formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const currentPassword = (formData.get("currentPassword") as string) || "";
-  const newPassword = (formData.get("newPassword") as string) || "";
-  const confirmPassword = (formData.get("confirmPassword") as string) || "";
+  const validatedFields = ChangePasswordSchema.safeParse(Object.fromEntries(formData.entries()));
 
-  if (newPassword.length < 8) {
-    return { success: false, message: "New password must be at least 8 characters." };
+  if (!validatedFields.success) {
+    const fieldErrors = validatedFields.error.flatten().fieldErrors;
+    const firstError = Object.values(fieldErrors).flat()[0];
+    return {
+      success: false,
+      message: firstError || "Invalid password input.",
+    };
   }
 
-  if (newPassword !== confirmPassword) {
-    return { success: false, message: "New passwords do not match." };
-  }
+  const { currentPassword, newPassword } = validatedFields.data;
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },

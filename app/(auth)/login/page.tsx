@@ -15,7 +15,6 @@ import { Label } from "@/components/ui/label";
 import { loginUser } from "@/lib/actions";
 
 export default function LoginPage() {
-  //how to work with useActionState
   const [state, formAction] = useActionState(loginUser, undefined);
   return (
     <form action={formAction}>
