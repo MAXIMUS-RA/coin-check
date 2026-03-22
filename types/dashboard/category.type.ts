@@ -4,7 +4,6 @@ type CategoryWithTransactions = {
    icon: string | null;
    type: string;
    color: string | null;
-   accountId: string;
    _count: { transactions: number };
    transactions: {
       id: string;

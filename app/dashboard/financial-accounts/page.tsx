@@ -28,7 +28,6 @@ export default async function AccountsPage() {
          _count: {
             select: {
                transactions: true,
-               categories: true,
             },
          },
       },
@@ -120,7 +119,6 @@ export default async function AccountsPage() {
                            {fmt(acc.balance, acc.currency)}
                         </TableCell>
                         <TableCell className="text-right">{acc._count.transactions}</TableCell>
-                        <TableCell className="text-right">{acc._count.categories}</TableCell>
                         <TableCell className="text-right">
                            <form
                               action={async () => {

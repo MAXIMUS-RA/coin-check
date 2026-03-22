@@ -92,7 +92,6 @@ model FinancialAccount {
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   transactions Transaction[]
-  categories   Category[]   // add this
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -106,19 +105,18 @@ enum TransactionType {
 
 model Category {
   id          String          @id @default(cuid())
-  name        String          // e.g., "Groceries", "Salary"
-  type        TransactionType // Matches INCOME or EXPENSE
-  icon        String?         // Emoji or lucide icon name
-  color       String?         // UI Hex Color
+  name        String          
+  type        TransactionType
+  icon        String?     
+  color       String?     
   
   userId      String
   user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  accountId   String       // add this
-  account     FinancialAccount @relation(fields: [accountId], references: [id], onDelete: Cascade) // add this
+
 
   transactions Transaction[]
-  @@unique([name, userId, accountId]) // update uniqueness so same name can exist in different accounts
+  @@unique([name, userId])
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 }
@@ -128,7 +126,7 @@ model Transaction {
   amount      Float
   type        TransactionType
   date        DateTime        @default(now())
-  description String          // E.g., "Starbucks", "Monthly Salary"
+  description String          
   notes       String?         @db.Text
   
   userId      String

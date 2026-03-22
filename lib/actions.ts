@@ -7,6 +7,7 @@ import { auth, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { Form } from "radix-ui";
+import { CategorySchema, FinancialAccountSchema, TransactionSchema } from "./zod-schemas";
 
 export async function registerUser(formData: FormData) {
    const name = formData.get("name") as string;
@@ -56,13 +57,24 @@ export async function createTransaction(formData: FormData) {
    const session = await auth();
    if (!session?.user?.id) redirect("/login");
 
-   const amount = parseFloat(formData.get("amount") as string);
-   const type = formData.get("type") as "INCOME" | "EXPENSE" | "TRANSFER";
-   const description = formData.get("description") as string;
-   const accountId = formData.get("accountId") as string;
-   const categoryId = formData.get("categoryId") as string | null;
-   const date = formData.get("date") as string;
-   const notes = formData.get("notes") as string | null;
+   const rawData = {
+      amount: formData.get("amount"),
+      type: formData.get("type"),
+      description: formData.get("description"),
+      accountId: formData.get("accountId"),
+      categoryId: formData.get("categoryId") || null,
+      date: formData.get("date"),
+      notes: formData.get("notes") || null,
+   };
+
+   const validatedFields = TransactionSchema.safeParse(rawData);
+
+   if (!validatedFields.success) {
+      console.log(validatedFields.error.flatten().fieldErrors);
+      throw new Error("Invalid transaction data provided");
+   }
+
+   const { amount, type, description, accountId, categoryId, date, notes } = validatedFields.data;
 
    try {
       const balanceAdjustment = type === "EXPENSE" ? -amount : amount;
@@ -109,10 +121,18 @@ export async function createCategory(prevState: any, formData: FormData) {
    const color = formData.get("color") as string | null;
    const accountId = formData.get("accountId") as string;
 
-   if (!accountId) {
-      return { success: false, message: "Please select an account." };
+   const rqwData = {
+      name,
+      type,
+      icon,
+      color,
+      accountId,
+   };
+   const validatedData = CategorySchema.safeParse(rqwData);
+   if (!validatedData.success) {
+      console.error("Category validation failed:", validatedData.error.flatten().fieldErrors);
+      throw new Error("Invalid category data provided");
    }
-
    try {
       await prisma.category.create({
          data: {
@@ -120,7 +140,6 @@ export async function createCategory(prevState: any, formData: FormData) {
             type,
             icon: icon || null,
             color: color || null,
-            accountId,
             userId: session.user.id,
          },
       });
@@ -137,16 +156,26 @@ export async function editCategory(id: string, prevState: any, formData: FormDat
    const session = await auth();
    if (!session?.user?.id) redirect("/login");
 
-   const name = formData.get("name") as string;
-   const type = formData.get("type") as "INCOME" | "EXPENSE";
-   const icon = formData.get("icon") as string | null;
-   const color = formData.get("color") as string | null;
-   const accountId = formData.get("accountId") as string;
-
+   const rqwData = {
+      name: formData.get("name") as string,
+      type: formData.get("type") as "INCOME" | "EXPENSE",
+      icon: formData.get("icon") as string | null,
+      color: formData.get("color") as string | null,
+   };
+   const validatedData = CategorySchema.safeParse(rqwData);
+   if (!validatedData.success) {
+      console.error("Category validation failed:", validatedData.error.flatten().fieldErrors);
+      throw new Error("Invalid category data provided");
+   }
    try {
       await prisma.category.updateMany({
          where: { id, userId: session.user.id },
-         data: { name, type, icon: icon || null, color: color || null, accountId },
+         data: {
+            name: validatedData.data.name,
+            type: validatedData.data.type,
+            icon: validatedData.data.icon || null,
+            color: validatedData.data.color || null,
+         },
       });
 
       revalidatePath("/dashboard/categories");
@@ -174,16 +203,19 @@ export async function createFinancialAccount(formData: FormData) {
    const session = await auth();
    if (!session?.user?.id) redirect("/login");
 
-   const name = (formData.get("name") as string)?.trim();
-   const type = formData.get("type") as "BANK" | "CREDIT" | "CASH" | "INVESTMENT";
-   const balance = Number(formData.get("balance") ?? 0);
-   const currency = ((formData.get("currency") as string) || "USD").toUpperCase();
+   const validatedFields = FinancialAccountSchema.safeParse({
+      name: formData.get("name"),
+      type: formData.get("type"),
+      balance: formData.get("balance") || 0,
+      currency: formData.get("currency") || "USD",
+   });
 
-   if (!name) throw new Error("Account name is required");
-   if (!["BANK", "CREDIT", "CASH", "INVESTMENT"].includes(type)) {
-      throw new Error("Invalid account type");
+   if (!validatedFields.success) {
+      console.error(validatedFields.error.flatten());
+      throw new Error("Invalid financial account data");
    }
-   if (!Number.isFinite(balance)) throw new Error("Invalid balance");
+
+   const { name, type, balance, currency } = validatedFields.data;
 
    await prisma.financialAccount.create({
       data: {
@@ -262,7 +294,6 @@ export async function getCategories(userId: string) {
          icon: true,
          type: true,
          color: true,
-         accountId: true,
          _count: { select: { transactions: true } },
          transactions: {
             select: {

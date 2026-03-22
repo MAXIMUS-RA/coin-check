@@ -43,7 +43,6 @@ export default function CategoryCreate() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Handle server errors gracefully */}
             {state?.success === false && (
               <p className="text-red-500 mb-4 text-sm">{state.message}</p>
             )}
