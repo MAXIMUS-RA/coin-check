@@ -3,11 +3,10 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, ArrowLeftRight, Receipt } from "lucide-react";
-// UPDATED DATA IMPORT
 import { getUserTransactions, getUserAccounts, getUserCategories } from "@/lib/data/transactions";
-// IMPORT YOUR NEW COMPONENT
 import TransactionCreate from "@/components/ui/dashboard/TransactionCreate";
 import DeleteTransactionButton from "@/components/ui/dashboard/DeleteTransactionButton";
+import TransactionEdit from "@/components/ui/dashboard/TransactionEdit";
 
 const TYPE_STYLES = {
    INCOME: {
@@ -42,8 +41,6 @@ function fmtDate(date: Date) {
 export default async function TransactionsPage() {
    const session = await auth();
    if (!session?.user?.id) redirect("/login");
-
-   // FETCH ALL NEEDED DATA PARALLEL
    const [transactions, accounts, categories] = await Promise.all([
       getUserTransactions(session.user.id),
       getUserAccounts(session.user.id),
@@ -63,8 +60,6 @@ export default async function TransactionsPage() {
                <h1 className="text-2xl font-bold text-white">Transactions</h1>
                <p className="text-sm text-slate-400 mt-1">Your full transaction history</p>
             </div>
-
-            {/* REPLACE THE OLD <Link> WITH THE NEW COMPONENT */}
             <div>
                <TransactionCreate accounts={accounts} categories={categories} />
             </div>
@@ -127,9 +122,10 @@ export default async function TransactionsPage() {
                            <th className="text-left px-6 py-3 font-medium">Date</th>
                            <th className="text-left px-6 py-3 font-medium">Type</th>
                            <th className="text-right px-6 py-3 font-medium">Amount</th>
+                           <th className="text-right px-6 py-3 font-medium">Actions</th>
                         </tr>
                      </thead>
-                     <tbody className="divide-y divide-slate-800">
+                     <tbody className="">
                         {transactions.map((tx) => {
                            const { label, cls, Icon } = TYPE_STYLES[tx.type];
                            return (
@@ -168,7 +164,10 @@ export default async function TransactionsPage() {
                                     {fmt(tx.amount, tx.account.currency)}
                                  </td>
                                  <td className="px-6 py-4 text-right">
-                                    <DeleteTransactionButton transactionId={tx.id} />
+                                    <div className="flex items-center justify-end gap-2">
+                                       <TransactionEdit transaction={tx} accounts={accounts} categories={categories} />
+                                       <DeleteTransactionButton transactionId={tx.id} />
+                                    </div>
                                  </td>
                               </tr>
                            );

@@ -2,8 +2,8 @@
 
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { deleteTransaction } from "@/lib/actions";
 import { toast } from "sonner";
+import { deleteTransaction } from "@/lib/actions";
 
 export default function DeleteTransactionButton({ transactionId }: { transactionId: string }) {
    const [isPending, startTransition] = useTransition();

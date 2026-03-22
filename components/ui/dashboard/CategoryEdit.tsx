@@ -26,7 +26,7 @@ export default function CategoryEdit({ category }: { category: CategoryWithTrans
    return (
       <Dialog open={open} onOpenChange={setOpen}>
          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" onClick={handleEditClick}>
+            <Button variant="outline" size="sm" onClick={handleEditClick} className="text-slate-200 border-slate-700 bg-slate-800 hover:bg-slate-700">
                <SquarePen className="w-4 h-4" />
             </Button>
          </DialogTrigger>
