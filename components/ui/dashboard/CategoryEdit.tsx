@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ca
 import { createCategory, editCategory } from "@/lib/actions";
 import SubmitBtn from "./SubmitBtn";
 import { SquarePen } from "lucide-react";
+import { toast } from "sonner";
 
 export default function CategoryEdit({ category }: { category: CategoryWithTransactions }) {
    const [open, setOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function CategoryEdit({ category }: { category: CategoryWithTrans
          </DialogTrigger>
          <DialogContent
             className="max-w-md bg-slate-900 border-slate-800 text-white p-0 shadow-lg"
-            onClick={(e) => e.stopPropagation()} // Optional safety bounds
+            onClick={(e) => e.stopPropagation()}
          >
             <Card className="bg-transparent border-0 w-full shadow-xl">
                <CardHeader className="border-b border-slate-800/50 pb-6">
@@ -43,7 +44,18 @@ export default function CategoryEdit({ category }: { category: CategoryWithTrans
                      <p className="text-red-500 mb-4 text-sm font-medium">{state.message}</p>
                   )}
 
-                  <form action={formAction} className="flex flex-col gap-5 pt-4">
+                  <form
+                     action={async (formData) => {
+                        try {
+                           await formAction(formData);
+                           setOpen(false);
+                           toast.success("Category updated successfully!");
+                        } catch (error) {
+                           toast.error("Failed to update category. Please try again.");
+                        }
+                     }}
+                     className="flex flex-col gap-5 pt-4"
+                  >
                      <div className="flex flex-col gap-2">
                         <Label htmlFor="type" className="text-slate-300 font-medium">
                            Transaction Type

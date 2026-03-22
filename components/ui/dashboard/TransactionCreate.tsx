@@ -146,7 +146,7 @@ export default function TransactionCreate({
                 />
               </div>
 
-              <div className="flex justify-end pt-4 border-t border-slate-800/100">
+              <div className="flex justify-end pt-4 border-t border-slate-800">
                   <Button type="button" variant="ghost" className="text-slate-400 hover:text-white mr-2" onClick={() => setOpen(false)}>
                      Cancel
                   </Button>

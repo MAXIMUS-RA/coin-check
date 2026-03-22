@@ -106,7 +106,7 @@ export default function FinancialAccountCreate() {
                         </div>
                      </div>
 
-                     <div className="flex justify-end pt-4 border-t border-slate-800/100 mt-4">
+                     <div className="flex justify-end pt-4 border-t border-slate-800 mt-4">
                         <Button
                            type="button"
                            variant="ghost"
