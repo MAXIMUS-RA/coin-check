@@ -18,13 +18,13 @@ export default function FinancialAccountCreate() {
    return (
       <Dialog open={open} onOpenChange={setOpen}>
          <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">+ Create Account</Button>
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">+ Create Account</Button>
          </DialogTrigger>
-         <DialogContent className="max-w-md bg-slate-900 border-slate-800 text-white p-0">
+         <DialogContent className="max-w-md bg-card border-border text-card-foreground p-0">
             <Card className="bg-transparent border-0 w-full shadow-xl">
-               <CardHeader className="border-b border-slate-800/50 pb-6">
-                  <CardTitle className="text-white text-xl">Create New Account</CardTitle>
-                  <CardDescription className="text-slate-400">
+               <CardHeader className="border-b border-border pb-6">
+                  <CardTitle className="text-xl">Create New Account</CardTitle>
+                  <CardDescription className="text-muted-foreground">
                      Add a new financial account to track your balances.
                   </CardDescription>
                </CardHeader>
@@ -42,7 +42,7 @@ export default function FinancialAccountCreate() {
                      className="flex flex-col gap-5"
                   >
                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="name" className="text-slate-300 font-medium">
+                        <Label htmlFor="name" className="text-muted-foreground font-medium">
                            Account Name
                         </Label>
                         <Input
@@ -51,12 +51,12 @@ export default function FinancialAccountCreate() {
                            type="text"
                            required
                            placeholder="e.g. Main Checking, Chase Visa"
-                           className="bg-slate-800 border-slate-700 text-white shadow-sm w-full"
+                           className="bg-background border-input text-foreground shadow-sm w-full"
                         />
                      </div>
 
                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="type" className="text-slate-300 font-medium">
+                        <Label htmlFor="type" className="text-muted-foreground font-medium">
                            Account Type
                         </Label>
                         <select
@@ -64,7 +64,7 @@ export default function FinancialAccountCreate() {
                            name="type"
                            required
                            defaultValue="BANK"
-                           className="bg-slate-800 border border-slate-700 text-white rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors w-full"
+                           className="bg-background border border-input text-foreground rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-ring focus:border-ring outline-none transition-colors w-full"
                         >
                            {ACCOUNT_TYPES.map((t) => (
                               <option key={t} value={t}>
@@ -76,7 +76,7 @@ export default function FinancialAccountCreate() {
 
                      <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-2">
-                           <Label htmlFor="balance" className="text-slate-300 font-medium">
+                           <Label htmlFor="balance" className="text-muted-foreground font-medium">
                               Initial Balance
                            </Label>
                            <Input
@@ -85,12 +85,12 @@ export default function FinancialAccountCreate() {
                               type="number"
                               step="0.01"
                               defaultValue="0"
-                              className="bg-slate-800 border-slate-700 text-white shadow-sm w-full font-medium"
+                              className="bg-background border-input text-foreground shadow-sm w-full font-medium"
                            />
                         </div>
 
                         <div className="flex flex-col gap-2">
-                           <Label htmlFor="currency" className="text-slate-300 font-medium">
+                           <Label htmlFor="currency" className="text-muted-foreground font-medium">
                               Currency
                            </Label>
                            <Input
@@ -99,21 +99,21 @@ export default function FinancialAccountCreate() {
                               type="text"
                               defaultValue="USD"
                               maxLength={6}
-                              className="bg-slate-800 border-slate-700 text-white shadow-sm w-full"
+                              className="bg-background border-input text-foreground shadow-sm w-full"
                            />
                         </div>
                      </div>
 
-                     <div className="flex justify-end pt-4 border-t border-slate-800 mt-4">
+                     <div className="flex justify-end pt-4 border-t border-border mt-4">
                         <Button
                            type="button"
                            variant="ghost"
-                           className="text-slate-400 hover:text-white mr-2"
+                           className="text-muted-foreground hover:text-foreground mr-2"
                            onClick={() => setOpen(false)}
                         >
                            Cancel
                         </Button>
-                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
+                        <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90">
                            Create Selected Account
                         </Button>
                      </div>

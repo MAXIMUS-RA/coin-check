@@ -117,11 +117,11 @@ export default function OverviewDashboard({
   const isHidden = (widget: string) => hiddenWidgets.includes(widget);
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6 text-white">
+    <div className="min-h-screen bg-background p-6 text-foreground">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Overview</h1>
-          <p className="mt-1 text-sm text-slate-400">Your personal finance cockpit at a glance ({dashboardPeriod}d focus).</p>
+          <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Your personal finance cockpit at a glance ({dashboardPeriod}d focus).</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -132,13 +132,13 @@ export default function OverviewDashboard({
             </Button>
           </Link>
           <Link href="/dashboard/financial-accounts">
-            <Button variant="outline" className="border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800">
+            <Button variant="outline" className="border-border bg-card text-foreground hover:bg-accent">
               <Wallet className="size-4" />
               Accounts
             </Button>
           </Link>
           <Link href="/dashboard/categories">
-            <Button variant="outline" className="border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800">
+            <Button variant="outline" className="border-border bg-card text-foreground hover:bg-accent">
               <Tag className="size-4" />
               Categories
             </Button>
@@ -186,16 +186,16 @@ export default function OverviewDashboard({
               {kpis.savingsRate.toFixed(1)}%
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-0 text-xs text-slate-300">(income - expense) / income</CardContent>
+          <CardContent className="pt-0 text-xs text-muted-foreground">(income - expense) / income</CardContent>
         </Card>
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-4 xl:grid-cols-3">
         {!isHidden("cashflow") && (
-        <Card className="xl:col-span-2 border-slate-800 bg-slate-900/70 text-white">
+        <Card className="xl:col-span-2 border-border bg-card/90 text-card-foreground">
           <CardHeader>
             <CardTitle>Cashflow Trend</CardTitle>
-            <CardDescription className="text-slate-400">Income vs expenses over the last 6 months</CardDescription>
+            <CardDescription className="text-muted-foreground">Income vs expenses over the last 6 months</CardDescription>
           </CardHeader>
           <CardContent className="h-80">
             <ResponsiveContainer width="100%" height="100%">
@@ -220,10 +220,10 @@ export default function OverviewDashboard({
                 />
                 <Tooltip
                   contentStyle={{
-                    background: "#0f172a",
-                    border: "1px solid #334155",
+                    background: "var(--popover)",
+                    border: "1px solid var(--border)",
                     borderRadius: "10px",
-                    color: "#e2e8f0",
+                    color: "var(--popover-foreground)",
                   }}
                   formatter={(value) => fmtCurrency(Number(value ?? 0), defaultCurrency)}
                 />
@@ -236,15 +236,15 @@ export default function OverviewDashboard({
         )}
 
         {!isHidden("expenseBreakdown") && (
-        <Card className="border-slate-800 bg-slate-900/70 text-white">
+        <Card className="border-border bg-card/90 text-card-foreground">
           <CardHeader>
             <CardTitle>Expense Breakdown</CardTitle>
-            <CardDescription className="text-slate-400">Where your money went</CardDescription>
+            <CardDescription className="text-muted-foreground">Where your money went</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-55">
               {expenseByCategory.length === 0 ? (
-                <div className="flex h-full items-center justify-center text-sm text-slate-400">No expense data yet</div>
+                <div className="flex h-full items-center justify-center text-sm text-muted-foreground">No expense data yet</div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -262,10 +262,10 @@ export default function OverviewDashboard({
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        background: "#0f172a",
-                        border: "1px solid #334155",
+                        background: "var(--popover)",
+                        border: "1px solid var(--border)",
                         borderRadius: "10px",
-                        color: "#e2e8f0",
+                        color: "var(--popover-foreground)",
                       }}
                       formatter={(value) => fmtCurrency(Number(value ?? 0), defaultCurrency)}
                     />
@@ -277,11 +277,11 @@ export default function OverviewDashboard({
             <div className="mt-4 space-y-2">
               {expenseByCategory.slice(0, 5).map((item) => (
                 <div key={item.name} className="flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-2 text-slate-300">
+                  <span className="flex items-center gap-2 text-muted-foreground">
                     <span className="size-2 rounded-full" style={{ backgroundColor: item.color }} />
                     {item.name}
                   </span>
-                  <span className="font-medium text-slate-200">{fmtCurrency(item.value, defaultCurrency)}</span>
+                  <span className="font-medium text-foreground">{fmtCurrency(item.value, defaultCurrency)}</span>
                 </div>
               ))}
             </div>
@@ -292,14 +292,14 @@ export default function OverviewDashboard({
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         {!isHidden("accountBalances") && (
-        <Card className="border-slate-800 bg-slate-900/70 text-white xl:col-span-1">
+        <Card className="border-border bg-card/90 text-card-foreground xl:col-span-1">
           <CardHeader>
             <CardTitle>Account Balances</CardTitle>
-            <CardDescription className="text-slate-400">Top accounts by current balance</CardDescription>
+            <CardDescription className="text-muted-foreground">Top accounts by current balance</CardDescription>
           </CardHeader>
           <CardContent className="h-72.5">
             {accountBalances.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-slate-400">No accounts yet</div>
+              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">No accounts yet</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={accountBalances} layout="vertical" margin={{ left: 15, right: 12, top: 4, bottom: 4 }}>
@@ -308,10 +308,10 @@ export default function OverviewDashboard({
                   <YAxis dataKey="name" type="category" width={90} stroke="#94a3b8" tickLine={false} axisLine={false} />
                   <Tooltip
                     contentStyle={{
-                      background: "#0f172a",
-                      border: "1px solid #334155",
+                      background: "var(--popover)",
+                      border: "1px solid var(--border)",
                       borderRadius: "10px",
-                      color: "#e2e8f0",
+                      color: "var(--popover-foreground)",
                     }}
                     formatter={(value) => fmtCurrency(Number(value ?? 0), defaultCurrency)}
                   />
@@ -324,28 +324,28 @@ export default function OverviewDashboard({
         )}
 
         {!isHidden("topSpending") && (
-        <Card className="border-slate-800 bg-slate-900/70 text-white xl:col-span-1">
+        <Card className="border-border bg-card/90 text-card-foreground xl:col-span-1">
           <CardHeader>
             <CardTitle>Top Spending Categories</CardTitle>
-            <CardDescription className="text-slate-400">Share of total expense</CardDescription>
+            <CardDescription className="text-muted-foreground">Share of total expense</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {topSpending.length === 0 ? (
-              <p className="text-sm text-slate-400">No spending data this period.</p>
+              <p className="text-sm text-muted-foreground">No spending data this period.</p>
             ) : (
               topSpending.map((item) => (
                 <div key={item.name} className="space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-300">{item.name}</span>
-                    <span className="font-medium text-slate-200">{fmtCurrency(item.amount, defaultCurrency)}</span>
+                    <span className="text-muted-foreground">{item.name}</span>
+                    <span className="font-medium text-foreground">{fmtCurrency(item.amount, defaultCurrency)}</span>
                   </div>
-                  <div className="h-2.5 overflow-hidden rounded-full bg-slate-800">
+                  <div className="h-2.5 overflow-hidden rounded-full bg-muted">
                     <div
                       className="h-full rounded-full"
                       style={{ width: `${Math.max(item.percent, 4)}%`, backgroundColor: item.color }}
                     />
                   </div>
-                  <p className="text-right text-xs text-slate-500">{item.percent.toFixed(1)}%</p>
+                  <p className="text-right text-xs text-muted-foreground">{item.percent.toFixed(1)}%</p>
                 </div>
               ))
             )}
@@ -354,19 +354,19 @@ export default function OverviewDashboard({
         )}
 
         {!isHidden("recentTransactions") && (
-        <Card className="border-slate-800 bg-slate-900/70 text-white xl:col-span-1">
+        <Card className="border-border bg-card/90 text-card-foreground xl:col-span-1">
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription className="text-slate-400">Latest activity in your ledger</CardDescription>
+            <CardDescription className="text-muted-foreground">Latest activity in your ledger</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {recentTransactions.length === 0 ? (
-              <p className="text-sm text-slate-400">No transactions yet.</p>
+              <p className="text-sm text-muted-foreground">No transactions yet.</p>
             ) : (
               recentTransactions.map((tx) => (
-                <div key={tx.id} className="rounded-lg border border-slate-800 bg-slate-900/80 p-3">
+                <div key={tx.id} className="rounded-lg border border-border bg-card p-3">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="truncate text-sm font-medium text-slate-100">{tx.description}</p>
+                    <p className="truncate text-sm font-medium text-foreground">{tx.description}</p>
                     <p
                       className={`shrink-0 text-sm font-semibold ${
                         tx.type === "INCOME"
@@ -380,7 +380,7 @@ export default function OverviewDashboard({
                       {fmtCurrency(tx.amount, defaultCurrency)}
                     </p>
                   </div>
-                  <div className="mt-1 flex items-center justify-between text-xs text-slate-400">
+                  <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
                     <span className="truncate">{tx.accountName}{tx.categoryName ? ` • ${tx.categoryName}` : ""}</span>
                     <span>{fmtDate(tx.date)}</span>
                   </div>

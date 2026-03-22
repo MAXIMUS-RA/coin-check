@@ -42,7 +42,7 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
         <Button
           variant="outline"
           size="sm"
-          className="h-8 text-slate-200 border-slate-700 bg-slate-800 hover:bg-slate-700"
+          className="h-8 text-foreground border-input bg-background hover:bg-accent"
           title="Edit account"
           onClick={(e) => e.stopPropagation()}
         >
@@ -50,11 +50,11 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-md bg-slate-900 border-slate-800 text-white p-0">
+      <DialogContent className="max-w-md bg-card border-border text-card-foreground p-0">
         <Card className="bg-transparent border-0 w-full shadow-xl">
-          <CardHeader className="border-b border-slate-800/50 pb-6">
-            <CardTitle className="text-white text-xl">Edit Account</CardTitle>
-            <CardDescription className="text-slate-400">
+          <CardHeader className="border-b border-border pb-6">
+            <CardTitle className="text-xl">Edit Account</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Update account information and current balance.
             </CardDescription>
           </CardHeader>
@@ -62,7 +62,7 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
           <CardContent className="pt-6">
             <form action={handleEdit} className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="edit-account-name" className="text-slate-300 font-medium">
+                <Label htmlFor="edit-account-name" className="text-muted-foreground font-medium">
                   Account Name
                 </Label>
                 <Input
@@ -71,12 +71,12 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
                   type="text"
                   required
                   defaultValue={account.name}
-                  className="bg-slate-800 border-slate-700 text-white shadow-sm w-full"
+                  className="bg-background border-input text-foreground shadow-sm w-full"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label htmlFor="edit-account-type" className="text-slate-300 font-medium">
+                <Label htmlFor="edit-account-type" className="text-muted-foreground font-medium">
                   Account Type
                 </Label>
                 <select
@@ -84,7 +84,7 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
                   name="type"
                   required
                   defaultValue={account.type}
-                  className="bg-slate-800 border border-slate-700 text-white rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors w-full"
+                  className="bg-background border border-input text-foreground rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-ring focus:border-ring outline-none transition-colors w-full"
                 >
                   {ACCOUNT_TYPES.map((t) => (
                     <option key={t} value={t}>
@@ -96,7 +96,7 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="edit-account-balance" className="text-slate-300 font-medium">
+                  <Label htmlFor="edit-account-balance" className="text-muted-foreground font-medium">
                     Balance
                   </Label>
                   <Input
@@ -105,12 +105,12 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
                     type="number"
                     step="0.01"
                     defaultValue={account.balance}
-                    className="bg-slate-800 border-slate-700 text-white shadow-sm w-full font-medium"
+                    className="bg-background border-input text-foreground shadow-sm w-full font-medium"
                   />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="edit-account-currency" className="text-slate-300 font-medium">
+                  <Label htmlFor="edit-account-currency" className="text-muted-foreground font-medium">
                     Currency
                   </Label>
                   <Input
@@ -119,21 +119,21 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
                     type="text"
                     maxLength={3}
                     defaultValue={account.currency}
-                    className="bg-slate-800 border-slate-700 text-white shadow-sm w-full"
+                    className="bg-background border-input text-foreground shadow-sm w-full"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end pt-4 border-t border-slate-800 mt-4">
+              <div className="flex justify-end pt-4 border-t border-border mt-4">
                 <Button
                   type="button"
                   variant="ghost"
-                  className="text-slate-400 hover:text-white mr-2"
+                  className="text-muted-foreground hover:text-foreground mr-2"
                   onClick={() => setOpen(false)}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white" disabled={isPending}>
+                <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
                   {isPending ? "Saving..." : "Save Changes"}
                 </Button>
               </div>

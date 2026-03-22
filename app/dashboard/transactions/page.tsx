@@ -54,11 +54,11 @@ export default async function TransactionsPage() {
    const net = totalIncome - totalExpenses;
 
    return (
-      <div className="min-h-screen bg-slate-950 p-6 text-white">
+      <div className="min-h-screen bg-background p-6 text-foreground">
          <div className="flex w-full justify-between">
             <div className="mb-6">
-               <h1 className="text-2xl font-bold text-white">Transactions</h1>
-               <p className="text-sm text-slate-400 mt-1">Your full transaction history</p>
+               <h1 className="text-2xl font-bold text-foreground">Transactions</h1>
+               <p className="text-sm text-muted-foreground mt-1">Your full transaction history</p>
             </div>
             <div>
                <TransactionCreate accounts={accounts} categories={categories} />
@@ -66,27 +66,27 @@ export default async function TransactionsPage() {
          </div>
 
          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <Card className="bg-slate-900 border-slate-800 text-white gap-3">
+            <Card className="bg-card border-border text-card-foreground gap-3">
                <CardHeader>
-                  <CardDescription className="text-slate-400 flex items-center gap-1.5">
+               <CardDescription className="text-muted-foreground flex items-center gap-1.5">
                      <TrendingUp className="size-4 text-emerald-400" /> Total Income
                   </CardDescription>
                   <CardTitle className="text-2xl font-bold text-emerald-400">{fmt(totalIncome)}</CardTitle>
                </CardHeader>
             </Card>
 
-            <Card className="bg-slate-900 border-slate-800 text-white gap-3">
+            <Card className="bg-card border-border text-card-foreground gap-3">
                <CardHeader>
-                  <CardDescription className="text-slate-400 flex items-center gap-1.5">
+               <CardDescription className="text-muted-foreground flex items-center gap-1.5">
                      <TrendingDown className="size-4 text-red-400" /> Total Expenses
                   </CardDescription>
                   <CardTitle className="text-2xl font-bold text-red-400">{fmt(totalExpenses)}</CardTitle>
                </CardHeader>
             </Card>
 
-            <Card className="bg-slate-900 border-slate-800 text-white gap-3">
+            <Card className="bg-card border-border text-card-foreground gap-3">
                <CardHeader>
-                  <CardDescription className="text-slate-400 flex items-center gap-1.5">
+               <CardDescription className="text-muted-foreground flex items-center gap-1.5">
                      <Receipt className="size-4 text-indigo-400" /> Net Balance
                   </CardDescription>
                   <CardTitle className={`text-2xl font-bold ${net >= 0 ? "text-emerald-400" : "text-red-400"}`}>
@@ -96,17 +96,17 @@ export default async function TransactionsPage() {
             </Card>
          </div>
 
-         <Card className="bg-slate-900 border-slate-800 gap-0 overflow-hidden">
-            <CardHeader className="border-b border-slate-800 pb-4">
-               <CardTitle className="text-white">All Transactions</CardTitle>
-               <CardDescription className="text-slate-400">
+         <Card className="bg-card border-border gap-0 overflow-hidden">
+            <CardHeader className="border-b border-border pb-4">
+               <CardTitle>All Transactions</CardTitle>
+               <CardDescription className="text-muted-foreground">
                   {transactions.length} transaction
                   {transactions.length !== 1 ? "s" : ""}
                </CardDescription>
             </CardHeader>
 
             {transactions.length === 0 ? (
-               <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+               <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
                   <Receipt className="size-12 mb-3 opacity-30" />
                   <p className="font-medium">No transactions yet</p>
                   <p className="text-sm mt-1">Add your first transaction to get started.</p>
@@ -115,7 +115,7 @@ export default async function TransactionsPage() {
                <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                      <thead>
-                        <tr className="border-b border-slate-800 text-slate-400 text-xs uppercase tracking-wide">
+                        <tr className="border-b border-border text-muted-foreground text-xs uppercase tracking-wide">
                            <th className="text-left px-6 py-3 font-medium">Description</th>
                            <th className="text-left px-6 py-3 font-medium">Category</th>
                            <th className="text-left px-6 py-3 font-medium">Account</th>
@@ -129,25 +129,25 @@ export default async function TransactionsPage() {
                         {transactions.map((tx) => {
                            const { label, cls, Icon } = TYPE_STYLES[tx.type];
                            return (
-                              <tr key={tx.id} className="hover:bg-slate-800/50 transition-colors">
+                              <tr key={tx.id} className="hover:bg-muted/50 transition-colors">
                                  <td className="px-6 py-4">
-                                    <p className="font-medium text-white">{tx.description}</p>
+                                    <p className="font-medium text-foreground">{tx.description}</p>
                                     {tx.notes && (
-                                       <p className="text-xs text-slate-500 mt-0.5 truncate max-w-xs">{tx.notes}</p>
+                                       <p className="text-xs text-muted-foreground mt-0.5 truncate max-w-xs">{tx.notes}</p>
                                     )}
                                  </td>
-                                 <td className="px-6 py-4 text-slate-300">
+                                 <td className="px-6 py-4 text-foreground/85">
                                     {tx.category ? (
                                        <span className="flex items-center gap-1.5">
                                           {tx.category.icon && <span>{tx.category.icon}</span>}
                                           {tx.category.name}
                                        </span>
                                     ) : (
-                                       <span className="text-slate-600">—</span>
+                                          <span className="text-muted-foreground">—</span>
                                     )}
                                  </td>
-                                 <td className="px-6 py-4 text-slate-300">{tx.account.name}</td>
-                                 <td className="px-6 py-4 text-slate-400 whitespace-nowrap">{fmtDate(tx.date)}</td>
+                                       <td className="px-6 py-4 text-foreground/85">{tx.account.name}</td>
+                                       <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">{fmtDate(tx.date)}</td>
                                  <td className="px-6 py-4">
                                     <span
                                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${cls}`}

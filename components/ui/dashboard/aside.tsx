@@ -22,6 +22,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import ThemeSwitcher from "@/components/ui/theme-switcher";
 
 const links = [
   { name: "Overview",     href: "/dashboard",              icon: LayoutDashboard },
@@ -37,17 +38,17 @@ export default function Aside() {
   const expanded = state === "expanded";
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-slate-800">
-      <SidebarHeader className="bg-slate-900">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border">
+      <SidebarHeader className="bg-sidebar">
         <div className="flex items-center gap-2 px-2 py-1.5">
           <span className="size-5 shrink-0 rounded-full bg-indigo-500" />
-          <span className="truncate text-sm font-semibold text-white group-data-[collapsible=icon]:hidden">
+          <span className="truncate text-sm font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
             CoinCheck
           </span>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-slate-900">
+      <SidebarContent className="bg-sidebar">
         <SidebarGroup>
           <SidebarMenu>
             {links.map((el) => {
@@ -59,7 +60,7 @@ export default function Aside() {
                     asChild
                     isActive={isActive}
                     tooltip={el.name}
-                    className="text-slate-300 hover:bg-slate-800 hover:text-white data-[active=true]:bg-indigo-600 data-[active=true]:text-white"
+                    className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
                   >
                     <Link href={el.href}>
                       <el.icon className="size-5" />
@@ -73,13 +74,17 @@ export default function Aside() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="bg-slate-900">
+      <SidebarFooter className="bg-sidebar">
+        <div className="px-2 pb-1 group-data-[collapsible=icon]:hidden">
+          <p className="mb-1 text-[11px] uppercase tracking-wide text-sidebar-foreground/60">Theme</p>
+          <ThemeSwitcher />
+        </div>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={toggleSidebar}
               tooltip={expanded ? "Collapse sidebar" : "Expand sidebar"}
-              className="text-slate-300 hover:bg-slate-800 hover:text-white"
+              className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             >
               {expanded ? <ChevronsLeft className="size-5" /> : <ChevronsRight className="size-5" />}
               <span>Collapse</span>
