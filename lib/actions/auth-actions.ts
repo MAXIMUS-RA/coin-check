@@ -6,45 +6,57 @@ import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { UserProfileSchema, ChangePasswordSchema } from "@/lib/zod-schemas";
+import { UserProfileSchema, ChangePasswordSchema, LoginSchema, RegisterSchema } from "@/lib/zod-schemas";
 
-export async function registerUser(formData: FormData) {
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
 
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-  if (existingUser) {
-    throw new Error("User already exists");
+export async function registerUser(prevState: any, formData: FormData) {
+  const validatedFields = RegisterSchema.safeParse(Object.fromEntries(formData.entries()));
+
+  if (!validatedFields.success) {
+    const fieldErrors = validatedFields.error.flatten().fieldErrors;
+    return { success: false, message: Object.values(fieldErrors).flat()[0] || "Invalid input." };
   }
 
-  const hashedPassword = await hash(password, 10);
+  const { name, email, password } = validatedFields.data;
 
-  await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-    },
-  });
+  try {
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return { success: false, message: "User already exists." };
+    }
 
+    const hashedPassword = await hash(password, 10);
+
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      },
+    });
+  } catch (error) {
+    return { success: false, message: "Registration failed. Please try again." };
+  }
   redirect("/login");
 }
 
 export async function loginUser(prevState: any, formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const validatedFields = LoginSchema.safeParse(Object.fromEntries(formData.entries()));
 
-  console.log(formData);
+  if (!validatedFields.success) {
+    const fieldErrors = validatedFields.error.flatten().fieldErrors;
+    return { error: Object.values(fieldErrors).flat()[0] || "Invalid input." };
+  }
+
+  const { email, password } = validatedFields.data;
 
   try {
-    const result = await signIn("credentials", { email, password, redirectTo: "/dashboard" });
-    console.log(result);
+    await signIn("credentials", { email, password, redirectTo: "/dashboard" });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return { error: "Invalid credentials." };
+          return { error: "Invalid email or password." };
         default:
           return { error: "Something went wrong." };
       }

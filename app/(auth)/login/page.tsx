@@ -13,6 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "@/lib/actions";
+import { AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [state, formAction] = useActionState(loginUser, undefined);
@@ -35,11 +37,20 @@ export default function LoginPage() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" name="password" type="password" required />
             </div>
+            <Link href="/register" className="text-sm text-muted-foreground hover:underline">
+              Doesnt have an account? Register here
+            </Link>
+            {state?.error && (
+              <div className="flex items-center gap-2 p-3 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md animate-in fade-in zoom-in duration-300">
+                <AlertCircle className="size-4" />
+                <span>{state.error}</span>
+              </div>
+            )}
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button>Cancel</Button>
-          <Button>Deploy</Button>
+          <Button variant="outline" type="button">Cancel</Button>
+          <Button type="submit">Login</Button>
         </CardFooter>
       </Card>
     </form>
