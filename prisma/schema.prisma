@@ -21,6 +21,10 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?   // For the Credentials provider
+  defaultCurrency String  @default("USD")
+  dashboardPeriod Int     @default(30)
+  themePreference String  @default("dark")
+  hiddenWidgets   String[] @default([])
 
   // Auth Relations
   accounts      Account[]

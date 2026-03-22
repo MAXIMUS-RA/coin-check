@@ -7,7 +7,7 @@ import {
   Wallet,
   ArrowLeftRight,
   Tag,
-  PiggyBank,
+  UserRound,
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
@@ -18,6 +18,7 @@ const links = [
   { name: "Accounts",     href: "/dashboard/financial-accounts",     icon: Wallet },
   { name: "Transactions", href: "/dashboard/transactions", icon: ArrowLeftRight },
   { name: "Categories",   href: "/dashboard/categories",   icon: Tag },
+  { name: "Profile",      href: "/dashboard/profile",      icon: UserRound },
 ];
 
 export default function Aside() {
