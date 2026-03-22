@@ -8,6 +8,7 @@ import { Input } from "../input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../card";
 import { toast } from "sonner"; 
 import { createTransaction } from "@/lib/actions";
+import SubmitBtn from "./SubmitBtn";
 
 export default function TransactionCreate({ 
   accounts, 
@@ -21,14 +22,14 @@ export default function TransactionCreate({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white">+ Create</Button>
+        <Button className="bg-primary text-primary-foreground hover:bg-primary/90">+ Create</Button>
       </DialogTrigger>
       
-      <DialogContent className="max-w-2xl bg-[#0f172a] border-slate-800 text-white p-0">
+      <DialogContent className="max-w-2xl bg-card border-border text-card-foreground p-0">
         <Card className="bg-transparent border-0 w-full shadow-xl">
-          <CardHeader className="border-b border-slate-800/50 pb-6 mb-6">
-            <CardTitle className="text-white text-xl">Transaction Details</CardTitle>
-            <CardDescription className="text-slate-400">
+          <CardHeader className="border-b border-border pb-6 mb-6">
+            <CardTitle className="text-xl">Transaction Details</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Fill in the details below to add a new record.
             </CardDescription>
           </CardHeader>
@@ -45,12 +46,12 @@ export default function TransactionCreate({
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="type" className="text-slate-300 font-medium">Type</Label>
+                  <Label htmlFor="create-transaction-type" className="text-muted-foreground font-medium">Type</Label>
                   <select
-                    id="type"
+                    id="create-transaction-type"
                     name="type"
                     required
-                    className="bg-slate-800 border border-slate-700 text-white rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-blue-500 outline-none w-full"
+                    className="bg-background border border-input text-foreground rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-ring focus:border-ring outline-none transition-colors w-full"
                   >
                     <option value="EXPENSE">Expense</option>
                     <option value="INCOME">Income</option>
@@ -59,30 +60,30 @@ export default function TransactionCreate({
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="date" className="text-slate-300 font-medium">Date</Label>
+                  <Label htmlFor="create-transaction-date" className="text-muted-foreground font-medium">Date</Label>
                   <Input
-                    id="date"
+                    id="create-transaction-date"
                     name="date"
                     type="date"
                     required
                     defaultValue={new Date().toISOString().split("T")[0]}
-                    className="bg-slate-800 border-slate-700 text-white w-full"
+                    className="bg-background border-input text-foreground w-full"
                   />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="amount" className="text-slate-300 font-medium">Amount</Label>
+                  <Label htmlFor="create-transaction-amount" className="text-muted-foreground font-medium">Amount</Label>
                   <div className="relative w-full">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                     <Input
-                      id="amount"
+                      id="create-transaction-amount"
                       name="amount"
                       type="number"
                       step="0.01"
                       min="0.01"
                       required
                       placeholder="0.00"
-                      className="bg-slate-800 border-slate-700 text-white pl-7 font-medium w-full"
+                      className="bg-background border-input text-foreground pl-7 font-medium w-full"
                     />
                   </div>
                 </div>
@@ -90,12 +91,12 @@ export default function TransactionCreate({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="accountId" className="text-slate-300 font-medium">Account</Label>
+                  <Label htmlFor="create-transaction-accountId" className="text-muted-foreground font-medium">Account</Label>
                   <select
-                    id="accountId"
+                    id="create-transaction-accountId"
                     name="accountId"
                     required
-                    className="bg-slate-800 border border-slate-700 text-white rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-blue-500 outline-none w-full"
+                    className="bg-background border border-input text-foreground rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-ring focus:border-ring outline-none transition-colors w-full"
                   >
                     {accounts.length ? accounts.map((a) => (
                       <option key={a.id} value={a.id}>{a.name} ({a.currency})</option>
@@ -104,13 +105,13 @@ export default function TransactionCreate({
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="categoryId" className="text-slate-300 font-medium">
-                    Category <span className="text-slate-500 font-normal">(optional)</span>
+                  <Label htmlFor="create-transaction-categoryId" className="text-muted-foreground font-medium">
+                    Category <span className="text-muted-foreground font-normal">(optional)</span>
                   </Label>
                   <select
-                    id="categoryId"
+                    id="create-transaction-categoryId"
                     name="categoryId"
-                    className="bg-slate-800 border border-slate-700 text-white rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-blue-500 outline-none w-full"
+                    className="bg-background border border-input text-foreground rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-ring focus:border-ring outline-none transition-colors w-full"
                   >
                     <option value="">— None —</option>
                     {categories.map((c) => (
@@ -123,36 +124,34 @@ export default function TransactionCreate({
               </div>
 
               <div className="flex flex-col gap-2 w-full">
-                <Label htmlFor="description" className="text-slate-300 font-medium">Description</Label>
+                <Label htmlFor="create-transaction-description" className="text-muted-foreground font-medium">Description</Label>
                 <Input
-                  id="description"
+                  id="create-transaction-description"
                   name="description"
                   required
                   placeholder="e.g. Starbucks, Grocery Run"
-                  className="bg-slate-800 border-slate-700 text-white w-full"
+                  className="bg-background border-input text-foreground w-full"
                 />
               </div>
 
               <div className="flex flex-col gap-2 w-full mb-2">
-                <Label htmlFor="notes" className="text-slate-300 font-medium">
-                  Notes <span className="text-slate-500 font-normal">(optional)</span>
+                <Label htmlFor="create-transaction-notes" className="text-muted-foreground font-medium">
+                  Notes <span className="text-muted-foreground font-normal">(optional)</span>
                 </Label>
                 <textarea
-                  id="notes"
+                  id="create-transaction-notes"
                   name="notes"
                   rows={2}
                   placeholder="Additional details..."
-                  className="bg-slate-800 border border-slate-700 text-white rounded-md px-3 py-2 text-sm resize-y focus:ring-1 focus:ring-blue-500 outline-none w-full"
+                  className="bg-background border border-input text-foreground rounded-md px-3 py-2 text-sm resize-y focus:ring-1 focus:ring-ring focus:border-ring outline-none transition-colors w-full"
                 />
               </div>
 
-              <div className="flex justify-end pt-4 border-t border-slate-800">
-                  <Button type="button" variant="ghost" className="text-slate-400 hover:text-white mr-2" onClick={() => setOpen(false)}>
+              <div className="flex justify-end pt-4 border-t border-border">
+                  <Button type="button" variant="ghost" className="text-muted-foreground hover:text-foreground mr-2" onClick={() => setOpen(false)}>
                      Cancel
                   </Button>
-                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
-                     Save Transaction
-                  </Button>
+                  <SubmitBtn />
                </div>
             </form>
           </CardContent>

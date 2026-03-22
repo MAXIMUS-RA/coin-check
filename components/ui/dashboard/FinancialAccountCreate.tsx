@@ -1,4 +1,3 @@
-// components/ui/dashboard/FinancialAccountCreate.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -9,6 +8,7 @@ import { Input } from "../input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../card";
 import { createFinancialAccount } from "@/lib/actions";
 import { toast } from "sonner";
+import SubmitBtn from "./SubmitBtn";
 
 const ACCOUNT_TYPES = ["BANK", "CREDIT", "CASH", "INVESTMENT"] as const;
 
@@ -42,11 +42,11 @@ export default function FinancialAccountCreate() {
                      className="flex flex-col gap-5"
                   >
                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="name" className="text-muted-foreground font-medium">
+                        <Label htmlFor="create-account-name" className="text-muted-foreground font-medium">
                            Account Name
                         </Label>
                         <Input
-                           id="name"
+                           id="create-account-name"
                            name="name"
                            type="text"
                            required
@@ -56,11 +56,11 @@ export default function FinancialAccountCreate() {
                      </div>
 
                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="type" className="text-muted-foreground font-medium">
+                        <Label htmlFor="create-account-type" className="text-muted-foreground font-medium">
                            Account Type
                         </Label>
                         <select
-                           id="type"
+                           id="create-account-type"
                            name="type"
                            required
                            defaultValue="BANK"
@@ -76,11 +76,11 @@ export default function FinancialAccountCreate() {
 
                      <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-2">
-                           <Label htmlFor="balance" className="text-muted-foreground font-medium">
+                           <Label htmlFor="create-account-balance" className="text-muted-foreground font-medium">
                               Initial Balance
                            </Label>
                            <Input
-                              id="balance"
+                              id="create-account-balance"
                               name="balance"
                               type="number"
                               step="0.01"
@@ -90,11 +90,11 @@ export default function FinancialAccountCreate() {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                           <Label htmlFor="currency" className="text-muted-foreground font-medium">
+                           <Label htmlFor="create-account-currency" className="text-muted-foreground font-medium">
                               Currency
                            </Label>
                            <Input
-                              id="currency"
+                              id="create-account-currency"
                               name="currency"
                               type="text"
                               defaultValue="USD"
@@ -113,9 +113,7 @@ export default function FinancialAccountCreate() {
                         >
                            Cancel
                         </Button>
-                        <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                           Create Selected Account
-                        </Button>
+                        <SubmitBtn />
                      </div>
                   </form>
                </CardContent>

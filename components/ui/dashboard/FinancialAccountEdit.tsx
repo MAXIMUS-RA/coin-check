@@ -9,6 +9,7 @@ import { Label } from "../label";
 import { Input } from "../input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../card";
 import { editFinancialAccount } from "@/lib/actions";
+import SubmitBtn from "./SubmitBtn";
 
 const ACCOUNT_TYPES = ["BANK", "CREDIT", "CASH", "INVESTMENT"] as const;
 
@@ -133,9 +134,7 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
-                  {isPending ? "Saving..." : "Save Changes"}
-                </Button>
+                <SubmitBtn />
               </div>
             </form>
           </CardContent>
