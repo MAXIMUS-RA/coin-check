@@ -11,7 +11,7 @@ export default function DashboardLayout({
       <div className="w-16 h-full shrink-0 border-r border-slate-800 bg-slate-950/50">
         <Aside />
       </div>
-      <div className="flex-1 h-full o w-full">{children}</div>
+      <div className="flex-1 h-full w-full">{children}</div>
     </div>
   );
 }
