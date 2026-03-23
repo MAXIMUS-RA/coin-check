@@ -12,13 +12,11 @@ import { deleteCategory } from "@/lib/actions";
 export default function CategoryRow({ category }: { category: CategoryWithTransactions }) {
    const totalAmount = category.transactions.reduce((acc, val) => acc + val.amount, 0);
 
-   //alert for delete confirmation
    const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       if (confirm(`Are you sure you want to delete the category "${category.name}"? This action cannot be undone.`)) {
          try {
             await deleteCategory(category.id);
-            // Optionally, you can trigger a refresh or show a success message here
             toast.success("Category deleted successfully!");
          } catch (error) {
             toast.error("Failed to delete category. Please try again.");
