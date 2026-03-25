@@ -1,12 +1,30 @@
 import { auth } from "@/auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+   DropdownMenu,
+   DropdownMenuContent,
+   DropdownMenuGroup,
+   DropdownMenuItem,
+   DropdownMenuLabel,
+   DropdownMenuSeparator,
+   DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { logoutUser } from "@/lib/actions";
+import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 
 export default async function Home() {
    const session = await auth();
    console.log(session);
+
+   const userImage = session?.user?.id
+      ? await prisma.user.findUnique({
+           where: { id: session.user.id },
+           select: { image: true },
+        })
+      : null;
    return (
       <div className="flex min-h-screen flex-col bg-zinc-50 font-sans dark:bg-zinc-950">
          <header className="flex items-center justify-between px-8 py-5 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
@@ -32,19 +50,28 @@ export default async function Home() {
             ) : (
                <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                     <Button variant="outline">Open</Button>
+                     <Avatar className="cursor-pointer">
+                        <AvatarImage src={userImage?.image || ""} alt="@shadcn" className="grayscale" />
+                        <AvatarFallback>Acc</AvatarFallback>
+                     </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                      <DropdownMenuGroup>
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuItem>Profile</DropdownMenuItem>
-                        <DropdownMenuItem>Billing</DropdownMenuItem>
-                        <DropdownMenuItem>Settings</  DropdownMenuItem>
+                        <Link href={"/dashboard"}>
+                           <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                        </Link>
                      </DropdownMenuGroup>
                      <DropdownMenuSeparator />
-                     <DropdownMenuItem>GitHub</DropdownMenuItem>
-                     <DropdownMenuItem>Support</DropdownMenuItem>
-                     <DropdownMenuItem disabled>API</DropdownMenuItem>
+                     <form action={logoutUser}>
+                        <Button
+                           type="submit"
+                           variant="outline"
+                           className="w-full border-input bg-background text-foreground hover:bg-accent"
+                        >
+                           {" "}
+                           <DropdownMenuItem>Logout</DropdownMenuItem>
+                        </Button>
+                     </form>
                   </DropdownMenuContent>
                </DropdownMenu>
             )}

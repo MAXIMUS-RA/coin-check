@@ -41,19 +41,19 @@ export default function Aside({ userImage }: { userImage?: string | null }) {
             </div>
          </SidebarHeader>
 
-         <SidebarContent className="bg-sidebar">
+         <SidebarContent className="bg-sidebar ">
             <SidebarGroup>
                <SidebarMenu>
                   {links.map((el) => {
                      const isActive = pathname === el.href;
 
                      return (
-                        <SidebarMenuItem key={el.href}>
+                        <SidebarMenuItem key={el.href} className="">
                            <SidebarMenuButton
                               asChild
                               isActive={isActive}
                               tooltip={el.name}
-                              className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
+                              className=" text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
                            >
                               <Link href={el.href}>
                                  {el.href === "/dashboard/profile" ? (
