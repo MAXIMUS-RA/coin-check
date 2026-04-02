@@ -23,9 +23,9 @@ export default async function ProfilePage() {
   if (!user) redirect("/login");
 
   return (
-    <div className="min-h-screen bg-background p-6 text-foreground">
+    <div className="min-h-screen bg-background p-4 text-foreground sm:p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Personal Account</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Personal Account</h1>
         <p className="mt-1 text-sm text-muted-foreground">Manage your profile, security, and dashboard preferences.</p>
       </div>
 

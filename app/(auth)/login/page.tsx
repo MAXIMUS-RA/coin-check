@@ -19,8 +19,8 @@ import Link from "next/link";
 export default function LoginPage() {
   const [state, formAction] = useActionState(loginUser, undefined);
   return (
-    <form action={formAction}>
-      <Card className="w-100">
+    <form action={formAction} className="w-full max-w-md">
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Login</CardTitle>
           <CardDescription>
@@ -48,9 +48,9 @@ export default function LoginPage() {
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" type="button">Cancel</Button>
-          <Button type="submit">Login</Button>
+        <CardFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
+          <Button variant="outline" type="button" className="w-full sm:w-auto">Cancel</Button>
+          <Button type="submit" className="w-full sm:w-auto">Login</Button>
         </CardFooter>
       </Card>
     </form>

@@ -35,8 +35,8 @@ export default async function AccountsPage() {
       .reduce((sum, a) => sum + Math.abs(a.balance), 0);
 
    return (
-      <div className="p-6 text-foreground">
-         <div className="w-full flex justify-between items-center mb-6">
+      <div className="p-4 text-foreground sm:p-6">
+         <div className="mb-6 flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                <h1 className="text-2xl font-bold text-foreground">Accounts</h1>
                <p className="text-sm text-muted-foreground mt-1">Manage your wallets, bank accounts, and cards</p>

@@ -40,8 +40,8 @@ async function DetailFinAcc({ params }: DetailFinAccProps) {
    if (!account) notFound();
 
    return (
-      <div className="space-y-6 p-6 text-foreground">
-         <div className="flex items-center justify-between">
+      <div className="space-y-6 p-4 text-foreground sm:p-6">
+         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
                <h1 className="text-2xl font-bold">{account.name}</h1>
                <p className="text-sm text-muted-foreground">Account details and latest transactions</p>

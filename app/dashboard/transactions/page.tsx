@@ -54,8 +54,8 @@ export default async function TransactionsPage() {
    const net = totalIncome - totalExpenses;
 
    return (
-      <div className="min-h-screen bg-background p-6 text-foreground">
-         <div className="flex w-full justify-between">
+      <div className="min-h-screen bg-background p-4 text-foreground sm:p-6">
+         <div className="mb-2 flex w-full flex-col gap-3 sm:mb-0 sm:flex-row sm:items-start sm:justify-between">
             <div className="mb-6">
                <h1 className="text-2xl font-bold text-foreground">Transactions</h1>
                <p className="text-sm text-muted-foreground mt-1">Your full transaction history</p>
@@ -113,7 +113,7 @@ export default async function TransactionsPage() {
                </div>
             ) : (
                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full min-w-190 text-sm">
                      <thead>
                         <tr className="border-b border-border text-muted-foreground text-xs uppercase tracking-wide">
                            <th className="text-left px-6 py-3 font-medium">Description</th>

@@ -28,8 +28,8 @@ export default async function CategoriesPage() {
    });
 
    return (
-      <div className="p-6 text-foreground">
-         <div className=" w-full flex justify-between">
+      <div className="p-4 text-foreground sm:p-6">
+         <div className="mb-4 flex w-full flex-col gap-3 sm:mb-0 sm:flex-row sm:items-start sm:justify-between">
             <div className="mb-6">
                <h1 className="text-2xl font-bold">Categories</h1>
                <p className="text-sm text-muted-foreground mt-1">Manage your expense and income categories</p>

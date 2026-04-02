@@ -117,28 +117,28 @@ export default function OverviewDashboard({
   const isHidden = (widget: string) => hiddenWidgets.includes(widget);
 
   return (
-    <div className="min-h-screen bg-background p-6 text-foreground">
+    <div className="min-h-screen bg-background p-4 text-foreground sm:p-6">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Overview</h1>
           <p className="mt-1 text-sm text-muted-foreground">Your personal finance cockpit at a glance ({dashboardPeriod}d focus).</p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Link href="/dashboard/transactions">
-            <Button className="bg-blue-600 text-white hover:bg-blue-700">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+          <Link href="/dashboard/transactions" className="w-full sm:w-auto">
+            <Button className="w-full justify-start bg-blue-600 text-white hover:bg-blue-700 sm:w-auto sm:justify-center">
               <ArrowLeftRight className="size-4" />
               Add Transaction
             </Button>
           </Link>
-          <Link href="/dashboard/financial-accounts">
-            <Button variant="outline" className="border-border bg-card text-foreground hover:bg-accent">
+          <Link href="/dashboard/financial-accounts" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full justify-start border-border bg-card text-foreground hover:bg-accent sm:w-auto sm:justify-center">
               <Wallet className="size-4" />
               Accounts
             </Button>
           </Link>
-          <Link href="/dashboard/categories">
-            <Button variant="outline" className="border-border bg-card text-foreground hover:bg-accent">
+          <Link href="/dashboard/categories" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full justify-start border-border bg-card text-foreground hover:bg-accent sm:w-auto sm:justify-center">
               <Tag className="size-4" />
               Categories
             </Button>

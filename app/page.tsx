@@ -27,22 +27,22 @@ export default async function Home() {
       : null;
    return (
       <div className="flex min-h-screen flex-col bg-zinc-50 font-sans dark:bg-zinc-950">
-         <header className="flex items-center justify-between px-8 py-5 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900 sm:px-8 sm:py-5">
             <div className="flex items-center gap-2">
                <span className="text-2xl">💰</span>
-               <span className="text-xl font-bold text-zinc-900 dark:text-white">CoinCheck</span>
+               <span className="text-lg font-bold text-zinc-900 dark:text-white sm:text-xl">CoinCheck</span>
             </div>
             {!session?.user ? (
-               <div className="flex gap-3">
+               <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:gap-3">
                   <Link
                      href="/login"
-                     className="px-4 py-2 rounded-full text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                     className="rounded-full px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                   >
                      Sign In
                   </Link>
                   <Link
                      href="/register"
-                     className="px-4 py-2 rounded-full text-sm font-medium bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 hover:opacity-90 transition-opacity"
+                     className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-white dark:text-zinc-900"
                   >
                      Get Started
                   </Link>
@@ -77,14 +77,14 @@ export default async function Home() {
             )}
          </header>
 
-         <main className="flex flex-1 flex-col items-center justify-center text-center px-6 py-24 gap-8">
+         <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-14 text-center sm:gap-8 sm:px-6 sm:py-24">
             <span className="px-4 py-1.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-medium">
                Your personal finance companion
             </span>
-            <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-zinc-900 dark:text-white max-w-2xl leading-tight">
+            <h1 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight text-zinc-900 dark:text-white sm:text-6xl">
                Take control of your <span className="text-green-500">finances</span>
             </h1>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-xl leading-relaxed">
+            <p className="max-w-xl text-base leading-relaxed text-zinc-500 dark:text-zinc-400 sm:text-lg">
                Track transactions, manage budgets, and visualize your spending habits — all in one place.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-2">
@@ -103,7 +103,7 @@ export default async function Home() {
             </div>
          </main>
 
-         <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 px-8 pb-24 max-w-5xl mx-auto w-full">
+         <section className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-6 px-4 pb-16 sm:grid-cols-3 sm:px-8 sm:pb-24">
             {[
                {
                   icon: "📊",
