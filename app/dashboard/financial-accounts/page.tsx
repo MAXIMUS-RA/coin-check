@@ -5,8 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { Wallet, CreditCard, Landmark } from "lucide-react";
 import FinancialAccountCreate from "@/components/ui/dashboard/FinancialAccountCreate";
-import DeleteAccountButton from "@/components/ui/dashboard/DeleteAccountButton";
-import FinancialAccountEdit from "@/components/ui/dashboard/FinancialAccountEdit";
+import FinancialAccountRow from "@/components/ui/dashboard/FinancialAccountRow";
 
 function fmt(amount: number, currency = "USD") {
    return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
@@ -51,7 +50,7 @@ export default async function AccountsPage() {
          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
             <Card className="bg-card border-border text-card-foreground gap-3">
                <CardHeader>
-               <CardDescription className="text-muted-foreground flex items-center gap-1.5">
+                  <CardDescription className="text-muted-foreground flex items-center gap-1.5">
                      <Wallet className="size-4 text-emerald-400" /> Total Balance
                   </CardDescription>
                   <CardTitle className="text-2xl font-bold text-emerald-400">{fmt(totalBalance)}</CardTitle>
@@ -60,7 +59,7 @@ export default async function AccountsPage() {
 
             <Card className="bg-card border-border text-card-foreground gap-3">
                <CardHeader>
-               <CardDescription className="text-muted-foreground flex items-center gap-1.5">
+                  <CardDescription className="text-muted-foreground flex items-center gap-1.5">
                      <CreditCard className="size-4 text-red-400" /> Credit Debt
                   </CardDescription>
                   <CardTitle className="text-2xl font-bold text-red-400">{fmt(debt)}</CardTitle>
@@ -69,7 +68,7 @@ export default async function AccountsPage() {
 
             <Card className="bg-card border-border text-card-foreground gap-3">
                <CardHeader>
-               <CardDescription className="text-muted-foreground flex items-center gap-1.5">
+                  <CardDescription className="text-muted-foreground flex items-center gap-1.5">
                      <Landmark className="size-4 text-blue-400" /> Accounts
                   </CardDescription>
                   <CardTitle className="text-2xl font-bold text-blue-400">{accounts.length}</CardTitle>
@@ -102,25 +101,7 @@ export default async function AccountsPage() {
                   </TableRow>
                ) : (
                   accounts.map((acc) => (
-                     <TableRow key={acc.id} className="hover:bg-muted/50">
-                        <TableCell className="font-medium">{acc.name}</TableCell>
-                        <TableCell>{acc.type}</TableCell>
-                        <TableCell>{acc.currency}</TableCell>
-                        <TableCell
-                           className={
-                              "text-right font-semibold " + (acc.balance >= 0 ? "text-emerald-400" : "text-red-400")
-                           }
-                        >
-                           {fmt(acc.balance, acc.currency)}
-                        </TableCell>
-                        <TableCell className="text-right">{acc._count.transactions}</TableCell>
-                        <TableCell className="text-right">
-                           <div className="flex items-center justify-end gap-2">
-                              <FinancialAccountEdit account={acc} />
-                              <DeleteAccountButton accountId={acc.id} />
-                           </div>
-                        </TableCell>
-                     </TableRow>
+                     <FinancialAccountRow account={acc} key={acc.id}></FinancialAccountRow>
                   ))
                )}
             </TableBody>
