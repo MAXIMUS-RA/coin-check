@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(request: Request) {
+export async function GET() {
    // Закоментовано для лабораторної
    // const session = await auth();
    // if (!session?.user?.id) {
@@ -14,19 +14,19 @@ export async function GET(request: Request) {
          orderBy: {
             date: "desc",
          },
-         take: 50, 
+         take: 50,
          include: {
             category: {
                select: {
                   name: true,
                   icon: true,
-               }
-            }
-         }
+               },
+            },
+         },
       });
-      
+
       return NextResponse.json(transactions, { status: 200 });
    } catch (error) {
-      return NextResponse.json({ error: "Failed to fetch transactions" }, { status: 500 });
+      return NextResponse.json({ error: "Failed to fetch transactions " + error }, { status: 500 });
    }
 }

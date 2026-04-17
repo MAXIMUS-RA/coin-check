@@ -6,13 +6,11 @@ import {
    DropdownMenuContent,
    DropdownMenuGroup,
    DropdownMenuItem,
-   DropdownMenuLabel,
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { logoutUser } from "@/lib/actions";
 import { prisma } from "@/lib/prisma";
-import Image from "next/image";
 import Link from "next/link";
 
 export default async function Home() {

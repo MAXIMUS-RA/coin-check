@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "../dialog";
 import { Button } from "../button";
 import { Label } from "../label";
@@ -19,7 +19,7 @@ export default function CategoryCreate() {
       if (state?.success) {
          setOpen(false);
       }
-   }, [state]);
+   }, [state?.success]);
    return (
       <Dialog open={open} onOpenChange={setOpen}>
          <DialogTrigger asChild>
@@ -39,7 +39,7 @@ export default function CategoryCreate() {
                   <form
                      action={async (formData) => {
                         try {
-                           await formAction(formData);
+                           formAction(formData);
                            toast.success("Category created successfully!");
                         } catch {
                            toast.error("Failed to create category. Please try again.");

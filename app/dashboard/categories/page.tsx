@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { Button } from "@/components/ui/button";
 import CategoryCreate from "@/components/ui/dashboard/CategoryCreate";
 import CategoryRow from "@/components/ui/dashboard/categoryRow";
 import { Table, TableBody, TableCaption, TableHead, TableHeader, TableRow, TableCell } from "@/components/ui/table";
