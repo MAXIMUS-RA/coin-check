@@ -17,7 +17,10 @@ export default async function DashboardLayout({
   }) : null;
 
   return (
-    <SidebarProvider defaultOpen={false} className="min-h-screen bg-background text-foreground">
+    <SidebarProvider
+      defaultOpen={false}
+      className="min-h-screen bg-background text-foreground [--sidebar-width:16rem] xl:[--sidebar-width:17rem] 2xl:[--sidebar-width:19rem]"
+    >
       <Aside userImage={user?.image} />
       <SidebarInset className="min-h-screen bg-background text-foreground">
         <div className="flex h-12 items-center border-b border-border px-3 md:hidden">
