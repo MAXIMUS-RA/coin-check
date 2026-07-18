@@ -31,11 +31,11 @@ export default function LoginPage() {
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" required />
+              <Input id="email" name="email" type="email"  />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" type="password" required />
+              <Input id="password" name="password" type="password"  />
             </div>
             <Link href="/register" className="text-sm text-muted-foreground hover:underline">
               Doesnt have an account? Register here
