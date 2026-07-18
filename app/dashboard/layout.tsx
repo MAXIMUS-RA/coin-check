@@ -16,7 +16,6 @@ export default async function DashboardLayout({
     select: { image: true }
   }) : null;
 
-  console.log(user);
 
   return (
     <SidebarProvider

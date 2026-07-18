@@ -22,7 +22,6 @@ export async function createTransaction(formData: FormData) {
   const validatedFields = TransactionSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
-    console.log(validatedFields.error.flatten().fieldErrors);
     throw new Error("Invalid transaction data provided");
   }
 
@@ -80,7 +79,6 @@ export async function editTransaction(id: string, formData: FormData) {
   const validatedFields = TransactionSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
-    console.log(validatedFields.error.flatten().fieldErrors);
     throw new Error("Invalid transaction data provided");
   }
 
