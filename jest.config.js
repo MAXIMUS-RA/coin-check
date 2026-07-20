@@ -14,6 +14,7 @@ const customJestConfig = {
    collectCoverageFrom: [
       "lib/utils.ts",
       "lib/zod-schemas.ts",
+      "lib/actions/transaction-actions.ts",
       "components/ui/dashboard/FinancialAccountRow.tsx",
       "types/dashboard/**/*.ts",
       "!**/*.d.ts",
