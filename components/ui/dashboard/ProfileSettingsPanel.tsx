@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useActionState, useEffect, useState } from "react";
+import React, { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { changePassword, logoutUser, updateUserProfile } from "@/lib/actions";
-import { UploadButton } from "@/utils/uploadthing";
+import { useUploadThing } from "@/utils/uploadthing";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ImageOff, LogOut, Loader2, Upload } from "lucide-react";
 
 type ProfileUser = {
    name: string | null;
@@ -25,6 +27,32 @@ export default function ProfileSettingsPanel({ user }: { user: ProfileUser }) {
    const [profileState, profileAction] = useActionState(updateUserProfile, null);
    const [passwordState, passwordAction] = useActionState(changePassword, null);
    const [avatarUrl, setAvatarUrl] = useState(user.image || "");
+   const fileInputRef = useRef<HTMLInputElement>(null);
+
+   const { startUpload, isUploading } = useUploadThing("profileImage", {
+      onClientUploadComplete: (res) => {
+         const file = res?.[0] as { ufsUrl?: string; url?: string; appUrl?: string } | undefined;
+         const url = file?.ufsUrl ?? file?.url ?? file?.appUrl;
+         if (!url) {
+            console.error("UploadThing response:", res);
+            toast.error("Upload finished but no file URL was returned.");
+            return;
+         }
+         setAvatarUrl(url);
+         toast.success("Avatar uploaded. Click Save Profile to persist changes.");
+      },
+      onUploadError: (error) => {
+         toast.error(error.message);
+      },
+   });
+
+   const avatarInitials = (user.name || user.email || "")
+      .split(" ")
+      .map((part) => part[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
 
    useEffect(() => {
       if (profileState?.message) {
@@ -80,34 +108,70 @@ export default function ProfileSettingsPanel({ user }: { user: ProfileUser }) {
                   </div>
 
                   <div className="space-y-2">
-                     <Label htmlFor="profile-image" className="text-muted-foreground">
-                        Avatar URL
-                     </Label>
-                     <UploadButton
-                        endpoint="profileImage"
-                        onClientUploadComplete={(res) => {
-                           const url = res?.[0]?.ufsUrl;
-                           if (!url) {
-                              toast.error("Upload finished but no file URL was returned.");
-                              return;
-                           }
+                     <Label className="text-muted-foreground">Avatar</Label>
+                     <div className="flex items-center gap-4 rounded-lg border border-border bg-background/50 p-4">
+                        <Avatar className="size-30 shrink-0 border border-border shadow-sm">
+                           <AvatarImage src={avatarUrl || undefined} alt="Avatar preview" className="object-cover" />
+                           <AvatarFallback className="bg-muted text-muted-foreground">
+                              {avatarInitials || <ImageOff className="size-5" />}
+                           </AvatarFallback>
+                        </Avatar>
 
-                           setAvatarUrl(url);
-                           toast.success("Avatar uploaded. Click Save Profile to persist changes.");
-                        }}
-                        onUploadError={(error) => {
-                           toast.error(error.message);
-                        }}
-                     ></UploadButton>
-                     <Input
-                        id="profile-image"
-                        name="image"
-                        type="url"
-                        value={avatarUrl}
-                        onChange={(event) => setAvatarUrl(event.target.value)}
-                        placeholder="https://..."
-                        className="bg-background border-input text-foreground"
-                     />
+                        <div className="flex flex-1 flex-col items-start gap-2">
+                           <input
+                              ref={fileInputRef}
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(event) => {
+                                 const file = event.target.files?.[0];
+                                 if (file) startUpload([file]);
+                                 event.target.value = "";
+                              }}
+                           />
+                           <Button
+                              type="button"
+                              size="sm"
+                              disabled={isUploading}
+                              onClick={() => fileInputRef.current?.click()}
+                              className="bg-blue-600 text-white hover:bg-blue-700"
+                           >
+                              {isUploading ? (
+                                 <Loader2 className="size-4 animate-spin" />
+                              ) : (
+                                 <Upload className="size-4" />
+                              )}
+                              {isUploading ? "Uploading…" : "Upload image"}
+                           </Button>
+
+                           {avatarUrl && (
+                              <Button
+                                 type="button"
+                                 variant="outline"
+                                 onClick={() => setAvatarUrl("")}
+                              >
+                                 Remove avatar
+                              </Button>
+                           )}
+
+                           <p className="text-xs text-muted-foreground">PNG or JPG, up to 2MB.</p>
+                        </div>
+                     </div>
+
+                     <div className="space-y-1.5">
+                        <Label htmlFor="profile-image" className="text-xs text-muted-foreground">
+                           Or paste an image URL
+                        </Label>
+                        <Input
+                           id="profile-image"
+                           name="image"
+                           type="url"
+                           value={avatarUrl}
+                           onChange={(event) => setAvatarUrl(event.target.value)}
+                           placeholder="https://..."
+                           className="bg-background border-input text-foreground"
+                        />
+                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -237,12 +301,14 @@ export default function ProfileSettingsPanel({ user }: { user: ProfileUser }) {
                </form>
 
                <div className="border-t border-border pt-4">
+                  <p className="mb-2 text-xs text-muted-foreground">Sign out of your account on this device.</p>
                   <form action={logoutUser}>
                      <Button
                         type="submit"
                         variant="outline"
-                        className="w-full border-input bg-background text-foreground hover:bg-accent"
+                        className="w-full border-destructive/40 bg-background text-destructive hover:bg-destructive/10 hover:text-destructive"
                      >
+                        <LogOut className="size-4" />
                         Log out
                      </Button>
                   </form>

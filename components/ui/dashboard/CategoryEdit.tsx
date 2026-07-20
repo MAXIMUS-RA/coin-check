@@ -26,7 +26,12 @@ export default function CategoryEdit({ category }: { category: CategoryWithTrans
    return (
       <Dialog open={open} onOpenChange={setOpen}>
          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" onClick={handleEditClick} className="text-foreground border-input bg-background hover:bg-accent">
+            <Button
+               variant="outline"
+               size="sm"
+               onClick={handleEditClick}
+               className="text-foreground border-input bg-background hover:bg-accent"
+            >
                <SquarePen className="w-4 h-4" />
             </Button>
          </DialogTrigger>
@@ -46,13 +51,8 @@ export default function CategoryEdit({ category }: { category: CategoryWithTrans
 
                   <form
                      action={async (formData) => {
-                        try {
-                           await formAction(formData);
-                           setOpen(false);
-                           toast.success("Category updated successfully!");
-                        } catch (error) {
-                           toast.error("Failed to update category. Please try again.");
-                        }
+                        await formAction(formData);
+                        toast.success("Category updated successfully!");
                      }}
                      className="flex flex-col gap-5 pt-4"
                   >

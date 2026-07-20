@@ -11,8 +11,6 @@ export const ourFileRouter = {
          return { userId: session.user.id };
       })
       .onUploadComplete(async ({ metadata, file }) => {
-         console.log("Upload complete for userId:", metadata.userId);
-         console.log("File URL:", file.ufsUrl);
          return { uploadedBy: metadata.userId, fileUrl: file.ufsUrl };
       }),
    profileImage: f({ image: { maxFileSize: "2MB", maxFileCount: 1 } })
@@ -22,8 +20,6 @@ export const ourFileRouter = {
          return { userId: session.user.id };
       })
       .onUploadComplete(async ({ metadata, file }) => {
-         console.log("Profile avatar upload complete for userId:", metadata.userId);
-         console.log("Avatar URL:", file.ufsUrl);
          return { uploadedBy: metadata.userId, fileUrl: file.ufsUrl };
       }),
 } satisfies FileRouter;

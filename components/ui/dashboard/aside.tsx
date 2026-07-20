@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Wallet, ArrowLeftRight, Tag, UserRound, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { LayoutDashboard, Wallet, ArrowLeftRight, Tag, UserRound, ChevronsLeft, ChevronsRight, Coins } from "lucide-react";
 import {
    Sidebar,
    SidebarContent,
    SidebarFooter,
    SidebarGroup,
+   SidebarGroupLabel,
    SidebarHeader,
    SidebarMenu,
    SidebarMenuButton,
@@ -33,36 +34,44 @@ export default function Aside({ userImage }: { userImage?: string | null }) {
    return (
       <Sidebar collapsible="icon" className="border-r border-sidebar-border">
          <SidebarHeader className="bg-sidebar">
-            <div className="flex items-center gap-2 px-2 py-1.5">
-               <span className="size-5 shrink-0 rounded-full bg-indigo-500" />
-               <span className="truncate text-sm font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
+            <div className="flex items-center gap-2.5 px-2 py-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+               <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-sm">
+                  <Coins className="size-4.5" />
+               </span>
+               <span className="truncate text-base font-semibold tracking-tight text-sidebar-foreground group-data-[collapsible=icon]:hidden">
                   CoinCheck
                </span>
             </div>
          </SidebarHeader>
 
-         <SidebarContent className="bg-sidebar ">
-            <SidebarGroup>
-               <SidebarMenu>
+         <SidebarContent className="bg-sidebar">
+            <SidebarGroup className="gap-1">
+               <SidebarGroupLabel className="text-[11px] font-medium uppercase tracking-wider text-sidebar-foreground/50">
+                  Menu
+               </SidebarGroupLabel>
+               <SidebarMenu className="gap-1">
                   {links.map((el) => {
                      const isActive = pathname === el.href;
 
                      return (
-                        <SidebarMenuItem key={el.href} className="">
+                        <SidebarMenuItem key={el.href}>
                            <SidebarMenuButton
                               asChild
                               isActive={isActive}
                               tooltip={el.name}
-                              className=" text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
+                              className="relative h-10 rounded-lg text-[13px] font-medium text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-primary data-[active=true]:font-semibold data-[active=true]:text-sidebar-primary-foreground data-[active=true]:shadow-sm lg:h-11 lg:text-sm"
                            >
                               <Link href={el.href}>
+                                 {isActive && (
+                                    <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-sidebar-primary-foreground/90 group-data-[collapsible=icon]:hidden" />
+                                 )}
                                  {el.href === "/dashboard/profile" ? (
-                                    <Avatar className="size-5 grayscale">
+                                    <Avatar className="size-5.5">
                                        <AvatarImage src={userImage || "https://github.com/shadcn.png"} alt="User Avatar" />
                                        <AvatarFallback>CN</AvatarFallback>
                                     </Avatar>
                                  ) : (
-                                    <el.icon className="size-5" />
+                                    <el.icon className="size-5 lg:size-5.5" />
                                  )}
                                  <span>{el.name}</span>
                               </Link>
@@ -74,9 +83,9 @@ export default function Aside({ userImage }: { userImage?: string | null }) {
             </SidebarGroup>
          </SidebarContent>
 
-         <SidebarFooter className="bg-sidebar">
-            <div className="px-2 pb-1 group-data-[collapsible=icon]:hidden">
-               <p className="mb-1 text-[11px] uppercase tracking-wide text-sidebar-foreground/60">Theme</p>
+         <SidebarFooter className="gap-2 border-t border-sidebar-border/60 bg-sidebar pt-2">
+            <div className="px-2 group-data-[collapsible=icon]:hidden">
+               <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-sidebar-foreground/50">Theme</p>
                <ThemeSwitcher />
             </div>
             <SidebarMenu>
@@ -84,7 +93,7 @@ export default function Aside({ userImage }: { userImage?: string | null }) {
                   <SidebarMenuButton
                      onClick={toggleSidebar}
                      tooltip={expanded ? "Collapse sidebar" : "Expand sidebar"}
-                     className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                     className="h-10 rounded-lg text-[13px] font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground lg:h-11 lg:text-sm"
                   >
                      {expanded ? <ChevronsLeft className="size-5" /> : <ChevronsRight className="size-5" />}
                      <span>Collapse</span>

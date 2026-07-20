@@ -165,3 +165,7 @@ export async function changePassword(prevState: any, formData: FormData) {
 export async function logoutUser() {
   await signOut({ redirectTo: "/login" });
 }
+
+export async function signInWithGoogle() {
+  await signIn("google", { redirectTo: "/dashboard" });
+}
