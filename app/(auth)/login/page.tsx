@@ -85,7 +85,7 @@ export default function LoginPage() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
-          <Button variant="outline" type="button" className="w-full sm:w-auto">Cancel</Button>
+          <Button variant="outline" type="button" className="w-full sm:w-auto"><Link href="/">Cancel</Link></Button>
           <Button type="submit" className="w-full sm:w-auto">Login</Button>
         </CardFooter>
       </Card>
