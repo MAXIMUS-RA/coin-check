@@ -35,13 +35,33 @@ export default function TransactionCreate({
           </CardHeader>
           <CardContent>
             <form action={async (formData) => {
-               try {
-                  await createTransaction(formData);
-                  setOpen(false); 
-                  toast.success("Transaction created successfully!");
-               } catch (error) {
-                  toast.error("Failed to create transaction.");
-               }
+               const submit = async (data: FormData, confirmed = false) => {
+                  if (confirmed) data.set("confirmOverdraft", "true");
+
+                  const result = await createTransaction(data);
+
+                  if (result.success) {
+                     setOpen(false);
+                     toast.success("Transaction created successfully!");
+                     return;
+                  }
+
+                  // Overdraft on a BANK/CREDIT account: allowed, but confirm it was intended.
+                  if (result.status === "confirm") {
+                     toast.warning(result.message, {
+                        duration: 10000,
+                        action: {
+                           label: "Overdraw anyway",
+                           onClick: () => submit(data, true),
+                        },
+                     });
+                     return;
+                  }
+
+                  toast.error(result.message);
+               };
+
+               await submit(formData);
             }} className="flex flex-col gap-6">
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
@@ -147,11 +167,11 @@ export default function TransactionCreate({
                 />
               </div>
 
-              <div className="flex justify-end pt-4 border-t border-border">
-                  <Button type="button" variant="ghost" className="text-muted-foreground hover:text-foreground mr-2" onClick={() => setOpen(false)}>
+              <div className="flex justify-end gap-2 pt-4 border-t border-border">
+                  <Button type="button" variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => setOpen(false)}>
                      Cancel
                   </Button>
-                  <SubmitBtn />
+                  <SubmitBtn label="Save Transaction" pendingLabel="Creating..." />
                </div>
             </form>
           </CardContent>

@@ -15,6 +15,7 @@ const customJestConfig = {
       "lib/utils.ts",
       "lib/zod-schemas.ts",
       "lib/actions/transaction-actions.ts",
+      "lib/balance-guard.ts",
       "components/ui/dashboard/FinancialAccountRow.tsx",
       "types/dashboard/**/*.ts",
       "!**/*.d.ts",

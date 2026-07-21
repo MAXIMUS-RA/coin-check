@@ -10,6 +10,7 @@ import { Input } from "../input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../card";
 import { editFinancialAccount } from "@/lib/actions";
 import SubmitBtn from "./SubmitBtn";
+import { CURRENCIES, currencyOptionLabel } from "@/lib/currencies";
 
 const ACCOUNT_TYPES = ["BANK", "CREDIT", "CASH", "INVESTMENT"] as const;
 
@@ -114,14 +115,23 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
                   <Label htmlFor="edit-account-currency" className="text-muted-foreground font-medium">
                     Currency
                   </Label>
-                  <Input
+                  <select
                     id="edit-account-currency"
                     name="currency"
-                    type="text"
-                    maxLength={3}
+                    required
                     defaultValue={account.currency}
-                    className="bg-background border-input text-foreground shadow-sm w-full"
-                  />
+                    className="bg-background border border-input text-foreground rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-ring focus:border-ring outline-none transition-colors w-full"
+                  >
+                    {/* Keep any legacy value selectable so editing never silently changes it */}
+                    {!CURRENCIES.some((c) => c.code === account.currency) && (
+                      <option value={account.currency}>{account.currency}</option>
+                    )}
+                    {CURRENCIES.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {currencyOptionLabel(c)}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -134,7 +144,7 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
                 >
                   Cancel
                 </Button>
-                <SubmitBtn />
+                <SubmitBtn label="Update Account" pendingLabel="Updating..." />
               </div>
             </form>
           </CardContent>

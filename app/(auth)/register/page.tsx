@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerUser, signInWithGoogle } from "@/lib/actions";
 import { AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const [state, formAction] = useActionState(registerUser, undefined);
@@ -95,7 +96,7 @@ export default function RegisterPage() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
-          <Button variant="outline" type="button" className="w-full sm:w-auto">Cancel</Button>
+          <Button variant="outline" type="button" className="w-full sm:w-auto"><Link href="/">Cancel</Link></Button>
           <Button type="submit" className="w-full sm:w-auto">Register</Button>
         </CardFooter>
       </Card>
