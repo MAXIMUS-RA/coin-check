@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ca
 import { createFinancialAccount } from "@/lib/actions";
 import { toast } from "sonner";
 import SubmitBtn from "./SubmitBtn";
+import { CURRENCIES, DEFAULT_CURRENCY, currencyOptionLabel } from "@/lib/currencies";
 
 const ACCOUNT_TYPES = ["BANK", "CREDIT", "CASH", "INVESTMENT"] as const;
 
@@ -93,14 +94,19 @@ export default function FinancialAccountCreate() {
                            <Label htmlFor="create-account-currency" className="text-muted-foreground font-medium">
                               Currency
                            </Label>
-                           <Input
+                           <select
                               id="create-account-currency"
                               name="currency"
-                              type="text"
-                              defaultValue="USD"
-                              maxLength={6}
-                              className="bg-background border-input text-foreground shadow-sm w-full"
-                           />
+                              required
+                              defaultValue={DEFAULT_CURRENCY}
+                              className="bg-background border border-input text-foreground rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-ring focus:border-ring outline-none transition-colors w-full"
+                           >
+                              {CURRENCIES.map((c) => (
+                                 <option key={c.code} value={c.code}>
+                                    {currencyOptionLabel(c)}
+                                 </option>
+                              ))}
+                           </select>
                         </div>
                      </div>
 

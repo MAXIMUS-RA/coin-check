@@ -10,6 +10,7 @@ import { changePassword, logoutUser, updateUserProfile } from "@/lib/actions";
 import { useUploadThing } from "@/utils/uploadthing";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ImageOff, LogOut, Loader2, Upload } from "lucide-react";
+import { CURRENCIES, currencyOptionLabel } from "@/lib/currencies";
 
 type ProfileUser = {
    name: string | null;
@@ -179,13 +180,23 @@ export default function ProfileSettingsPanel({ user }: { user: ProfileUser }) {
                         <Label htmlFor="defaultCurrency" className="text-muted-foreground">
                            Default Currency
                         </Label>
-                        <Input
+                        <select
                            id="defaultCurrency"
                            name="defaultCurrency"
-                           maxLength={3}
+                           required
                            defaultValue={user.defaultCurrency}
-                           className="bg-background border-input text-foreground uppercase"
-                        />
+                           className="bg-background border border-input rounded-md h-10 px-3 text-sm text-foreground w-full"
+                        >
+                           {/* Keep any legacy value selectable so saving never silently changes it */}
+                           {!CURRENCIES.some((c) => c.code === user.defaultCurrency) && (
+                              <option value={user.defaultCurrency}>{user.defaultCurrency}</option>
+                           )}
+                           {CURRENCIES.map((c) => (
+                              <option key={c.code} value={c.code}>
+                                 {currencyOptionLabel(c)}
+                              </option>
+                           ))}
+                        </select>
                      </div>
 
                      <div className="space-y-2">

@@ -9,9 +9,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ca
 import SubmitBtn from "./SubmitBtn";
 import { toast } from "sonner";
 import { createCategory } from "@/lib/actions";
+import { CUSTOM_CATEGORY, presetsForType } from "@/lib/category-presets";
 
 export default function CategoryCreate() {
    const [open, setOpen] = useState(false);
+   const [type, setType] = useState("EXPENSE");
+   const [preset, setPreset] = useState(CUSTOM_CATEGORY);
+   const [customName, setCustomName] = useState("");
+   const [icon, setIcon] = useState("");
+
+   const presets = presetsForType(type);
+   const isCustom = preset === CUSTOM_CATEGORY;
 
    const [state, formAction] = useActionState(createCategory, null);
 
@@ -20,6 +28,20 @@ export default function CategoryCreate() {
          setOpen(false);
       }
    }, [state?.success]);
+
+   // Reset the suggestion when switching type — the two lists don't overlap.
+   function handleTypeChange(nextType: string) {
+      setType(nextType);
+      setPreset(CUSTOM_CATEGORY);
+      setIcon("");
+   }
+
+   // Picking a suggestion fills in its emoji too, but the user can still edit it.
+   function handlePresetChange(nextPreset: string) {
+      setPreset(nextPreset);
+      const match = presets.find((p) => p.name === nextPreset);
+      if (match) setIcon(match.icon);
+   }
    return (
       <Dialog open={open} onOpenChange={setOpen}>
          <DialogTrigger asChild>
@@ -55,6 +77,8 @@ export default function CategoryCreate() {
                            id="type"
                            name="type"
                            required
+                           value={type}
+                           onChange={(e) => handleTypeChange(e.target.value)}
                            className="bg-background border border-input text-foreground rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-ring focus:border-ring outline-none transition-colors w-full"
                         >
                            <option value="EXPENSE">Expense</option>
@@ -63,17 +87,41 @@ export default function CategoryCreate() {
                      </div>
 
                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="name" className="text-muted-foreground font-medium">
+                        <Label htmlFor="preset" className="text-muted-foreground font-medium">
                            Category Name
                         </Label>
-                        <Input
-                           id="name"
-                           name="name"
-                           type="text"
-                           required
-                           placeholder="e.g. Groceries, Freelance Salary"
-                           className="bg-background border-input text-foreground shadow-sm w-full"
-                        />
+                        <select
+                           id="preset"
+                           value={preset}
+                           onChange={(e) => handlePresetChange(e.target.value)}
+                           className="bg-background border border-input text-foreground rounded-md px-3 h-10 text-sm focus:ring-1 focus:ring-ring focus:border-ring outline-none transition-colors w-full"
+                        >
+                           <option value={CUSTOM_CATEGORY}>✏️ Write my own…</option>
+                           <optgroup label={type === "INCOME" ? "Common income" : "Common expenses"}>
+                              {presets.map((p) => (
+                                 <option key={p.name} value={p.name}>
+                                    {p.icon} {p.name}
+                                 </option>
+                              ))}
+                           </optgroup>
+                        </select>
+
+                        {isCustom ? (
+                           <Input
+                              id="name"
+                              name="name"
+                              type="text"
+                              required
+                              autoFocus
+                              value={customName}
+                              onChange={(e) => setCustomName(e.target.value)}
+                              placeholder="e.g. Groceries, Freelance Salary"
+                              className="bg-background border-input text-foreground shadow-sm w-full"
+                           />
+                        ) : (
+                           // A preset is selected — submit its name without an extra field.
+                           <input type="hidden" name="name" value={preset} />
+                        )}
                      </div>
 
                      <div className="grid grid-cols-2 gap-4">
@@ -86,6 +134,8 @@ export default function CategoryCreate() {
                               name="icon"
                               type="text"
                               maxLength={2}
+                              value={icon}
+                              onChange={(e) => setIcon(e.target.value)}
                               placeholder="e.g. 🛒"
                               className="bg-background border-input text-foreground shadow-sm w-full"
                            />
