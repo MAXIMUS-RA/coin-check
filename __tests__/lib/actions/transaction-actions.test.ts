@@ -20,6 +20,7 @@ jest.mock("@/lib/prisma", () => ({
       },
       financialAccount: {
          update: jest.fn(),
+         findUnique: jest.fn(),
       },
    },
 }));
@@ -34,7 +35,7 @@ const mockAuth = auth as unknown as jest.Mock;
 const mockPrisma = prisma as unknown as {
    $transaction: jest.Mock;
    transaction: { create: jest.Mock; update: jest.Mock; delete: jest.Mock; findUnique: jest.Mock };
-   financialAccount: { update: jest.Mock };
+   financialAccount: { update: jest.Mock; findUnique: jest.Mock };
 };
 
 const USER_ID = "user-1";
@@ -75,10 +76,24 @@ function existingTransaction(overrides: Record<string, unknown> = {}) {
    });
 }
 
+/** Default account has plenty of funds so the balance guard stays out of the way. */
+function mockAccount(overrides: Record<string, unknown> = {}) {
+   mockPrisma.financialAccount.findUnique.mockResolvedValue({
+      id: ACCOUNT_A,
+      userId: USER_ID,
+      name: "Checking",
+      type: "BANK",
+      balance: 100000,
+      currency: "USD",
+      ...overrides,
+   });
+}
+
 beforeEach(() => {
    jest.clearAllMocks();
    mockAuth.mockResolvedValue({ user: { id: USER_ID } });
    mockPrisma.$transaction.mockResolvedValue([]);
+   mockAccount();
 });
 
 describe("createTransaction balance arithmetic", () => {
@@ -199,6 +214,81 @@ describe("deleteTransaction balance arithmetic", () => {
 
       await expect(deleteTransaction("txn-1")).rejects.toThrow("Failed to delete transaction");
       expect(mockPrisma.financialAccount.update).not.toHaveBeenCalled();
+   });
+});
+
+describe("overdraft guard", () => {
+   it("rejects an expense that would overdraw a CASH account", async () => {
+      mockAccount({ type: "CASH", name: "Wallet", balance: 1200 });
+
+      const result = await createTransaction(buildFormData({ type: "EXPENSE", amount: "6000" }));
+
+      expect(result).toMatchObject({ success: false, status: "forbidden" });
+      expect(mockPrisma.$transaction).not.toHaveBeenCalled();
+   });
+
+   it("still allows a CASH expense within the available balance", async () => {
+      mockAccount({ type: "CASH", name: "Wallet", balance: 1200 });
+
+      const result = await createTransaction(buildFormData({ type: "EXPENSE", amount: "1200" }));
+
+      expect(result).toEqual({ success: true });
+      expect(balanceUpdates()).toEqual([{ accountId: ACCOUNT_A, increment: -1200 }]);
+   });
+
+   it("asks for confirmation before overdrawing a BANK account", async () => {
+      mockAccount({ type: "BANK", name: "Checking", balance: 1200 });
+
+      const result = await createTransaction(buildFormData({ type: "EXPENSE", amount: "6000" }));
+
+      expect(result).toMatchObject({ success: false, status: "confirm" });
+      expect(mockPrisma.$transaction).not.toHaveBeenCalled();
+   });
+
+   it("proceeds with the overdraft once confirmed", async () => {
+      mockAccount({ type: "BANK", name: "Checking", balance: 1200 });
+
+      const formData = buildFormData({ type: "EXPENSE", amount: "6000" });
+      formData.set("confirmOverdraft", "true");
+
+      const result = await createTransaction(formData);
+
+      expect(result).toEqual({ success: true });
+      expect(balanceUpdates()).toEqual([{ accountId: ACCOUNT_A, increment: -6000 }]);
+   });
+
+   it("never blocks INCOME, which only increases the balance", async () => {
+      mockAccount({ type: "CASH", name: "Wallet", balance: 0 });
+
+      const result = await createTransaction(buildFormData({ type: "INCOME", amount: "500" }));
+
+      expect(result).toEqual({ success: true });
+   });
+
+   it("confirmation cannot be bypassed for CASH", async () => {
+      mockAccount({ type: "CASH", name: "Wallet", balance: 1200 });
+
+      const formData = buildFormData({ type: "EXPENSE", amount: "6000" });
+      formData.set("confirmOverdraft", "true"); // user tries to force it
+
+      const result = await createTransaction(formData);
+
+      expect(result).toMatchObject({ success: false, status: "forbidden" });
+      expect(mockPrisma.$transaction).not.toHaveBeenCalled();
+   });
+
+   it("guards the destination account when editing moves a transaction", async () => {
+      existingTransaction({ accountId: ACCOUNT_A, type: "EXPENSE", amount: 10 });
+      // both lookups return a low-balance CASH account
+      mockAccount({ type: "CASH", name: "Wallet", balance: 100 });
+
+      const result = await editTransaction(
+         "txn-1",
+         buildFormData({ accountId: ACCOUNT_B, type: "EXPENSE", amount: "5000" }),
+      );
+
+      expect(result).toMatchObject({ success: false, status: "forbidden" });
+      expect(mockPrisma.$transaction).not.toHaveBeenCalled();
    });
 });
 

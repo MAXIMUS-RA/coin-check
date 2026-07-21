@@ -4,8 +4,15 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { TransactionSchema } from "@/lib/zod-schemas";
+import { checkProjectedBalance, type GuardAccountType } from "@/lib/balance-guard";
 
-export async function createTransaction(formData: FormData) {
+/** Result returned to the client. Server actions must RETURN errors, not throw:
+ *  Next.js masks thrown error messages in production. */
+export type TransactionActionResult =
+  | { success: true }
+  | { success: false; status: "forbidden" | "confirm" | "error"; message: string };
+
+export async function createTransaction(formData: FormData): Promise<TransactionActionResult> {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
@@ -22,13 +29,36 @@ export async function createTransaction(formData: FormData) {
   const validatedFields = TransactionSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
-    throw new Error("Invalid transaction data provided");
+    return { success: false, status: "error", message: "Invalid transaction data provided" };
   }
 
   const { amount, type, description, accountId, categoryId, date, notes } = validatedFields.data;
+  const confirmedOverdraft = formData.get("confirmOverdraft") === "true";
 
   try {
     const balanceAdjustment = type === "EXPENSE" ? -amount : amount;
+
+    const account = await prisma.financialAccount.findUnique({
+      where: { id: accountId, userId: session.user.id },
+    });
+
+    if (!account) {
+      return { success: false, status: "error", message: "Account not found" };
+    }
+
+    const guard = checkProjectedBalance(
+      account.type as GuardAccountType,
+      account.balance + balanceAdjustment,
+      account.name,
+      account.currency,
+    );
+
+    if (guard.status === "forbidden") {
+      return { success: false, status: "forbidden", message: guard.message };
+    }
+    if (guard.status === "confirm" && !confirmedOverdraft) {
+      return { success: false, status: "confirm", message: guard.message };
+    }
 
     await prisma.$transaction([
       prisma.transaction.create({
@@ -54,15 +84,17 @@ export async function createTransaction(formData: FormData) {
     ]);
   } catch (error) {
     console.error("Error creating transaction:", error);
-    throw new Error("Failed to create transaction");
+    return { success: false, status: "error", message: "Failed to create transaction" };
   }
 
   revalidatePath("/dashboard/transactions");
   revalidatePath("/dashboard/financial-accounts");
   revalidatePath("/dashboard/categories");
+
+  return { success: true };
 }
 
-export async function editTransaction(id: string, formData: FormData) {
+export async function editTransaction(id: string, formData: FormData): Promise<TransactionActionResult> {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
@@ -79,10 +111,11 @@ export async function editTransaction(id: string, formData: FormData) {
   const validatedFields = TransactionSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
-    throw new Error("Invalid transaction data provided");
+    return { success: false, status: "error", message: "Invalid transaction data provided" };
   }
 
   const { amount, type, description, accountId, categoryId, date, notes } = validatedFields.data;
+  const confirmedOverdraft = formData.get("confirmOverdraft") === "true";
 
   try {
     const existingTransaction = await prisma.transaction.findUnique({
@@ -90,11 +123,46 @@ export async function editTransaction(id: string, formData: FormData) {
     });
 
     if (!existingTransaction) {
-      throw new Error("Transaction not found");
+      return { success: false, status: "error", message: "Transaction not found" };
     }
 
     const oldEffect = existingTransaction.type === "EXPENSE" ? -existingTransaction.amount : existingTransaction.amount;
     const newEffect = type === "EXPENSE" ? -amount : amount;
+
+    // Guard every account whose balance changes. When a transaction moves between
+    // accounts, the source account is refunded (-oldEffect) and the target takes
+    // the new effect, so both need checking.
+    const affected =
+      existingTransaction.accountId === accountId
+        ? [{ id: accountId, delta: newEffect - oldEffect }]
+        : [
+            { id: existingTransaction.accountId, delta: -oldEffect },
+            { id: accountId, delta: newEffect },
+          ];
+
+    for (const { id: affectedId, delta } of affected) {
+      const account = await prisma.financialAccount.findUnique({
+        where: { id: affectedId, userId: session.user.id },
+      });
+
+      if (!account) {
+        return { success: false, status: "error", message: "Account not found" };
+      }
+
+      const guard = checkProjectedBalance(
+        account.type as GuardAccountType,
+        account.balance + delta,
+        account.name,
+        account.currency,
+      );
+
+      if (guard.status === "forbidden") {
+        return { success: false, status: "forbidden", message: guard.message };
+      }
+      if (guard.status === "confirm" && !confirmedOverdraft) {
+        return { success: false, status: "confirm", message: guard.message };
+      }
+    }
 
     if (existingTransaction.accountId === accountId) {
       await prisma.$transaction([
@@ -153,12 +221,14 @@ export async function editTransaction(id: string, formData: FormData) {
     }
   } catch (error) {
     console.error("Failed to edit transaction", error);
-    throw new Error("Failed to edit transaction");
+    return { success: false, status: "error", message: "Failed to edit transaction" };
   }
 
   revalidatePath("/dashboard/transactions");
   revalidatePath("/dashboard/financial-accounts");
   revalidatePath("/dashboard/categories");
+
+  return { success: true };
 }
 
 export async function deleteTransaction(id: string) {

@@ -49,15 +49,31 @@ export default function TransactionEdit({
    const [open, setOpen] = useState(false);
    const [isPending, startTransition] = useTransition();
 
-   const handleEdit = (formData: FormData) => {
+   const handleEdit = (formData: FormData, confirmed = false) => {
       startTransition(async () => {
-         try {
-            await editTransaction(transaction.id, formData);
+         if (confirmed) formData.set("confirmOverdraft", "true");
+
+         const result = await editTransaction(transaction.id, formData);
+
+         if (result.success) {
             setOpen(false);
             toast.success("Transaction updated successfully!");
-         } catch {
-            toast.error("Failed to update transaction.");
+            return;
          }
+
+         // Overdraft on a BANK/CREDIT account: allowed, but confirm it was intended.
+         if (result.status === "confirm") {
+            toast.warning(result.message, {
+               duration: 10000,
+               action: {
+                  label: "Overdraw anyway",
+                  onClick: () => handleEdit(formData, true),
+               },
+            });
+            return;
+         }
+
+         toast.error(result.message);
       });
    };
 
