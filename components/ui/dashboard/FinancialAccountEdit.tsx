@@ -134,7 +134,7 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
                 >
                   Cancel
                 </Button>
-                <SubmitBtn />
+                <SubmitBtn label="Update Account" pendingLabel="Updating..." />
               </div>
             </form>
           </CardContent>

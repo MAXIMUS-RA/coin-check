@@ -120,7 +120,7 @@ export default function CategoryEdit({ category }: { category: CategoryWithTrans
                      </div>
 
                      <div className="pt-4 mt-2 border-t border-border">
-                        <SubmitBtn />
+                        <SubmitBtn label="Update Category" pendingLabel="Updating..." className="w-full" />
                      </div>
                   </form>
                </CardContent>

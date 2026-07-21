@@ -147,11 +147,11 @@ export default function TransactionCreate({
                 />
               </div>
 
-              <div className="flex justify-end pt-4 border-t border-border">
-                  <Button type="button" variant="ghost" className="text-muted-foreground hover:text-foreground mr-2" onClick={() => setOpen(false)}>
+              <div className="flex justify-end gap-2 pt-4 border-t border-border">
+                  <Button type="button" variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => setOpen(false)}>
                      Cancel
                   </Button>
-                  <SubmitBtn />
+                  <SubmitBtn label="Save Transaction" pendingLabel="Creating..." />
                </div>
             </form>
           </CardContent>

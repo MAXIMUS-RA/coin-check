@@ -104,16 +104,16 @@ export default function FinancialAccountCreate() {
                         </div>
                      </div>
 
-                     <div className="flex justify-end pt-4 border-t border-border mt-4">
+                     <div className="flex justify-end gap-2 pt-4 border-t border-border mt-4">
                         <Button
                            type="button"
                            variant="ghost"
-                           className="text-muted-foreground hover:text-foreground mr-2"
+                           className="text-muted-foreground hover:text-foreground"
                            onClick={() => setOpen(false)}
                         >
                            Cancel
                         </Button>
-                        <SubmitBtn />
+                        <SubmitBtn label="Save Account" pendingLabel="Creating..." />
                      </div>
                   </form>
                </CardContent>

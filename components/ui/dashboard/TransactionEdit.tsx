@@ -216,7 +216,7 @@ export default function TransactionEdit({
                         >
                            Cancel
                         </Button>
-                        <SubmitBtn />
+                        <SubmitBtn label="Update Transaction" pendingLabel="Updating..." />
                      </div>
                   </form>
                </CardContent>

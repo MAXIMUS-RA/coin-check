@@ -108,7 +108,7 @@ export default function CategoryCreate() {
                      </div>
 
                      <div className="pt-4 mt-2 border-t border-border">
-                        <SubmitBtn />
+                        <SubmitBtn label="Save Category" pendingLabel="Creating..." className="w-full" />
                      </div>
                   </form>
                </CardContent>
