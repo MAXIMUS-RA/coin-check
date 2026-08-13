@@ -21,6 +21,7 @@
     "@prisma/client": "^7.4.2",
     "@types/bcryptjs": "^3.0.0",
     "@uploadthing/react": "^7.3.3",
+    "@vercel/speed-insights": "^2.0.0",
     "D": "^1.0.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
