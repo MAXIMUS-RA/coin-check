@@ -31,7 +31,7 @@ export function checkProjectedBalance(
 ): BalanceGuardResult {
    if (projectedBalance >= 0) return { status: "ok" };
 
-   if (accountType === "CASH") {
+   if (accountType === "CASH") { 
       return {
          status: "forbidden",
          message: `Cash accounts cannot go below zero. "${accountName}" would drop to ${formatAmount(

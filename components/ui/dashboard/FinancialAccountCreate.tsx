@@ -32,12 +32,12 @@ export default function FinancialAccountCreate() {
                <CardContent className="pt-6">
                   <form
                      action={async (formData) => {
-                        try {
-                           await createFinancialAccount(formData);
+                        const result = await createFinancialAccount(formData);
+                        if (result.success) {
                            setOpen(false);
-                           toast.success("Account created successfully!");
-                        } catch (error) {
-                           toast.error("Failed to create account. Please try again.");
+                           toast.success(result.message || "Account created successfully!");
+                        } else {
+                           toast.error(result.message);
                         }
                      }}
                      className="flex flex-col gap-5"

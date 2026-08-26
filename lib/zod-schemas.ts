@@ -24,9 +24,11 @@ export const FinancialAccountSchema = z.object({
    type: z.enum(["BANK", "CREDIT", "CASH", "INVESTMENT"], {
       message: "Invalid account type selected.",
    }),
-   balance: z.coerce.number({
-      message: "Balance must be a number",
-   }),
+   balance: z.coerce
+      .number({
+         message: "Balance must be a number",
+      })
+      .positive("Balance must be greater than 0"),
    currency: z.string().length(3, "Currency must be exactly 3 letters (e.g., USD)").toUpperCase(),
 });
 

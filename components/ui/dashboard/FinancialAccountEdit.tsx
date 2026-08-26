@@ -28,12 +28,12 @@ export default function FinancialAccountEdit({ account }: { account: AccountLike
 
   const handleEdit = (formData: FormData) => {
     startTransition(async () => {
-      try {
-        await editFinancialAccount(account.id, formData);
+      const result = await editFinancialAccount(account.id, formData);
+      if (result.success) {
         setOpen(false);
-        toast.success("Account updated successfully!");
-      } catch {
-        toast.error("Failed to update account.");
+        toast.success(result.message || "Account updated successfully!");
+      } else {
+        toast.error(result.message);
       }
     });
   };
